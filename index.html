@@ -505,7 +505,7 @@
 
       <!-- Photo — absolute center, overlaps title by 40px upward -->
       <div class="h4-photo-block">
-        <img src="thai.jpg" alt="Thai Nguyen — Video Editor" class="h4-photo"/>
+        <img src="https://res.cloudinary.com/dgiqdfycy/image/upload/Thai%20Portfo/thai_mbsntw.jpg" alt="Thai Nguyen — Video Editor" class="h4-photo"/>
         <div class="h4-location">BASED IN VIETNAM</div>
       </div>
 
@@ -796,8 +796,30 @@
     if (!rafId) { lastTs = null; rafId = requestAnimationFrame(tick); }
   }
 
+  /* Desktop: hover */
   wrap.addEventListener('mouseenter', () => go(1));
   wrap.addEventListener('mouseleave', () => go(0));
+
+  /* Mobile / touch: auto-loop VIDEO EDITOR ↔ BIHANDZ */
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (isTouch) {
+    /* Also allow tap-to-toggle on touch devices */
+    let tapped = false;
+    wrap.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      tapped = !tapped;
+      go(tapped ? 1 : 0);
+    }, { passive: false });
+
+    /* Auto-loop: morph every 2.5s */
+    let autoState = 0;
+    function autoLoop() {
+      autoState = autoState === 0 ? 1 : 0;
+      go(autoState);
+    }
+    setInterval(autoLoop, 2500);
+  }
+
   paint(0); /* init: show VIDEO EDITOR */
 })();
 </script>
