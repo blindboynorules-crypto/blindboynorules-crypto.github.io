@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thai Nguyen — Video Editor · BIHANDZ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,900&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:      #060606;
+      --surface: #0d0d0d;
+      --card:    #111111;
+      --orange:  #f97316;
+      --orange2: #ea580c;
+      --white:   #ffffff;
+      --muted:   #555;
+      --muted2:  #888;
+      --border:  rgba(255,255,255,0.06);
+      --font:    'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      font-family: var(--font);
+      background: transparent;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); }
+
+    /* ── DOTTED SURFACE BACKGROUND ──────────────────────────── */
+    #dotted-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #dotted-bg canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    /* All page content must sit above canvas */
+    #main-nav, #hero, .ticker-wrap, #reel, #connect, footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: 62px; padding: 0 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(6,6,6,0); backdrop-filter: blur(0px);
+      border-bottom: 1px solid transparent;
+      transition: background .4s, backdrop-filter .4s, border-color .4s;
+    }
+    nav.scrolled {
+      background: rgba(6,6,6,0.88);
+      backdrop-filter: blur(32px) saturate(180%);
+      border-bottom: 1px solid rgba(249,115,22,.08);
+    }
+    .logo {
+      font-size: .8rem; font-weight: 900; letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: .7rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted2);
+      transition: color .3s; position: relative; padding-bottom: .25rem;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--orange);
+      transition: width .3s cubic-bezier(.2,0,.2,1);
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+    .hire-btn {
+      background: var(--orange); color: #fff;
+      font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; padding: .5rem 1.4rem; border-radius: 999px;
+      border: 1px solid rgba(249,115,22,.4);
+      transition: all .3s cubic-bezier(.2,0,.2,1); cursor: pointer;
+    }
+    .hire-btn:hover {
+      background: var(--orange2); transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(249,115,22,.45);
+    }
+
+    /* ── HERO 04 (aliimam / 21st.dev) ───────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Dashed grid background */
+    #h4-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      mask-image:
+        repeating-linear-gradient(to right, black 0px, black 3px, transparent 3px, transparent 8px),
+        repeating-linear-gradient(to bottom, black 0px, black 3px, transparent 3px, transparent 8px),
+        radial-gradient(ellipse 80% 70% at 50% 0%, #000 40%, transparent 100%);
+      -webkit-mask-image:
+        repeating-linear-gradient(to right, black 0px, black 3px, transparent 3px, transparent 8px),
+        repeating-linear-gradient(to bottom, black 0px, black 3px, transparent 3px, transparent 8px),
+        radial-gradient(ellipse 80% 70% at 50% 0%, #000 40%, transparent 100%);
+      mask-composite: intersect;
+      -webkit-mask-composite: source-in;
+    }
+
+    /* Hero wrapper */
+    .h4-wrap {
+      position: relative; z-index: 2;
+      max-width: 1100px; margin: 0 auto;
+      padding: 7rem 3rem 4rem;
+    }
+
+    /* Year label */
+    .h4-stat {
+      font-size: .72rem; font-weight: 500; letter-spacing: .18em;
+      color: var(--muted2); margin-bottom: 1rem;
+    }
+
+    /* Giant title block */
+    .h4-title-wrap { position: relative; }
+    .h4-title {
+      font-size: clamp(5rem, 14vw, 14rem);
+      font-weight: 900; letter-spacing: -.07em; line-height: .85;
+      text-transform: uppercase; text-align: center;
+    }
+
+    /* ── LIQUID MORPH TITLE ──────────────────────────────────── */
+    .h4-morph {
+      position: relative;
+      cursor: default;
+      filter: url(#morph-threshold) blur(0.6px);
+    }
+    /* Invisible in-flow ghost — provides height */
+    .morph-ghost {
+      display: block;
+      visibility: hidden;
+      user-select: none;
+      pointer-events: none;
+      line-height: .85;
+      background: linear-gradient(135deg, var(--orange) 0%, #ea580c 60%, #c2410c 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Overlapping animated spans */
+    .morph-t1, .morph-t2 {
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      display: block;
+      line-height: .85;
+      background: linear-gradient(135deg, var(--orange) 0%, #ea580c 60%, #c2410c 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* BIHANDZ — vertically centred within two-line height */
+    .morph-t2 { top: 50%; transform: translateY(-50%); }
+    /* Name — absolute bottom-right, matching original */
+    .h4-name {
+      position: absolute; bottom: -.5rem; right: 0;
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
+      font-weight: 300; letter-spacing: .35em;
+      text-transform: uppercase; color: var(--white);
+    }
+
+    /* ── Middle row: services + photo ── */
+    .h4-mid {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding-top: 5rem;   /* 80px — photo overlaps -40px upward */
+      min-height: 380px;
+    }
+
+    /* Services box — left-aligned, fixed width */
+    .h4-services {
+      background: #0e0e0e;
+      border: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      max-width: 340px;
+      width: 100%;
+      display: flex; align-items: flex-end;
+      position: relative; z-index: 1;
+    }
+    .h4-services-list {
+      font-size: clamp(1rem, 1.8vw, 1.4rem);
+      font-weight: 700; line-height: 1.55;
+      color: var(--white);
+    }
+    .h4-services-list div { display: block; }
+
+    /* Photo — absolute, centered, overlaps title by 40px */
+    .h4-photo-block {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      display: flex;
+      background: #0e0e0e;
+      border: 1px solid var(--border);
+      z-index: 3;
+      overflow: hidden;
+    }
+    .h4-photo {
+      width: 210px; height: 340px;
+      object-fit: cover; object-position: center top;
+      filter: grayscale(100%) contrast(1.1);
+      display: block;
+    }
+    /* Rotated location text beside photo */
+    .h4-location {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: .58rem; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted2); padding: .75rem .5rem;
+      white-space: nowrap;
+    }
+
+    /* ── Bio ── */
+    .h4-bio {
+      margin-top: 4.5rem; text-align: center;
+    }
+    .h4-bio p {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: clamp(.7rem, 1vw, .88rem);
+      font-weight: 500; letter-spacing: .1em;
+      line-height: 1.9; color: var(--muted2);
+      max-width: 560px; margin: 0 auto;
+    }
+
+    /* ── CTAs ── */
+    .h4-cta {
+      display: flex; justify-content: center;
+      gap: 1rem; padding-top: 2rem;
+    }
+    .btn-fill {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: var(--orange); color: #fff;
+      font-size: .72rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: .85rem 2rem; border-radius: 999px;
+      border: 1px solid rgba(249,115,22,.5);
+      transition: all .3s cubic-bezier(.2,0,.2,1); cursor: pointer;
+    }
+    .btn-fill:hover {
+      background: var(--orange2); transform: translateY(-3px);
+      box-shadow: 0 16px 44px rgba(249,115,22,.45);
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .72rem; font-weight: 500; color: var(--muted2);
+      transition: all .3s cubic-bezier(.2,0,.2,1); cursor: pointer;
+      padding: .5rem 0;
+    }
+    .btn-ghost:hover { color: var(--orange); }
+    .btn-ghost svg { transition: transform .3s; }
+    .btn-ghost:hover svg { transform: translateX(4px); }
+
+    /* ── Recent work row ── */
+    .h4-recent {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 4rem; gap: 2rem;
+    }
+    .h4-cards { position: relative; width: 220px; height: 140px; flex-shrink: 0; }
+    .h4-card {
+      position: absolute;
+      width: 180px; height: 115px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px; overflow: hidden;
+      background: var(--card);
+    }
+    .h4-card-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .h4-card:nth-child(1) { bottom: 0; left: 0; z-index: 1; }
+    .h4-card:nth-child(2) { bottom: 10px; left: 12px; z-index: 2; }
+    .h4-card:nth-child(3) { bottom: 20px; left: 24px; z-index: 3; }
+    .h4-card:nth-child(1) .h4-card-inner { background: linear-gradient(135deg, #1a0a04, #0d0603); }
+    .h4-card:nth-child(2) .h4-card-inner { background: linear-gradient(135deg, #0e0616, #080409); }
+    .h4-card:nth-child(3) .h4-card-inner { background: linear-gradient(135deg, #0c0a06, #060608); box-shadow: 0 8px 30px rgba(0,0,0,.6); }
+    .h4-recent-text { text-align: right; }
+    .h4-recent-label {
+      font-size: .68rem; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--muted2);
+      display: flex; align-items: center; justify-content: flex-end; gap: .5rem;
+      margin-bottom: .5rem;
+    }
+    .h4-recent-title {
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      font-weight: 900; letter-spacing: -.04em;
+      text-transform: uppercase; line-height: .9;
+    }
+    .h4-recent-title em { font-style: normal; color: var(--orange); }
+
+    /* ── TICKER ──────────────────────────────────────────────── */
+    .ticker-wrap {
+      overflow: hidden; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface); padding: .9rem 0;
+    }
+    .ticker {
+      display: flex; width: max-content;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker:hover { animation-play-state: paused; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-item {
+      flex-shrink: 0;
+      font-size: .68rem; font-weight: 700; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--muted2);
+      padding: 0 2rem; white-space: nowrap;
+    }
+    .ticker-item em { color: var(--orange); font-style: normal; }
+    .ticker-dot {
+      display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--orange); margin: 0 1.2rem; vertical-align: middle;
+    }
+
+    /* ── COMMON SECTION ──────────────────────────────────────── */
+    .section-label {
+      font-size: .62rem; font-weight: 700; letter-spacing: .25em;
+      text-transform: uppercase; color: var(--orange);
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      font-weight: 900; letter-spacing: -.035em; text-align: center;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.85) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--orange) 0%, #ea580c 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-sub {
+      font-size: .88rem; color: var(--muted2); text-align: center;
+      max-width: 500px; line-height: 1.7;
+    }
+
+    /* ── REEL ─────────────────────────────────────────────────── */
+    #reel {
+      padding: 7rem 4rem;
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
+      background: var(--surface);
+    }
+    .reel-frame {
+      width: 100%; max-width: 860px;
+      aspect-ratio: 16/9;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 60px rgba(249,115,22,.06);
+    }
+    .reel-frame video { width: 100%; height: 100%; display: block; border: none; object-fit: cover; }
+
+    /* ── CONNECT ─────────────────────────────────────────────── */
+    #connect {
+      padding: 8rem 5rem;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 2.5rem;
+    }
+    .connect-h {
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 900; letter-spacing: -.05em; line-height: .9;
+    }
+    .connect-h .stroke {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,.15);
+    }
+    .connect-sub {
+      font-size: 1rem; color: var(--muted2); max-width: 420px; line-height: 1.7;
+    }
+    .connect-email {
+      font-size: clamp(1rem, 2vw, 1.6rem);
+      font-weight: 700; color: var(--orange); letter-spacing: -.01em;
+      border-bottom: 2px solid rgba(249,115,22,.4);
+      padding-bottom: .3rem; transition: all .3s cubic-bezier(.2,0,.2,1);
+    }
+    .connect-email:hover {
+      border-bottom-color: var(--orange); color: #fff; transform: translateY(-2px);
+    }
+    .connect-socials { display: flex; gap: 1rem; align-items: center; }
+    .social-btn {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .7rem 1.4rem; border-radius: 999px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .05em;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: all .3s cubic-bezier(.2,0,.2,1); cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    .social-btn:hover {
+      background: rgba(255,255,255,.12); border-color: rgba(249,115,22,.3);
+      transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.3);
+    }
+    .social-btn svg { width: 15px; height: 15px; }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      padding: 2rem 5rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-copy { font-size: .62rem; color: var(--muted); letter-spacing: .06em; }
+    .footer-logo {
+      font-size: .75rem; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+    }
+    .footer-logo span { color: var(--orange); }
+
+    /* ── PULSE ───────────────────────────────────────────────── */
+    @keyframes pulse {
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:.2; transform:scale(.5); }
+    }
+
+    /* ── REVEAL ──────────────────────────────────────────────── */
+    /* opacity stays 1 by default — JS enhances if CDN loads */
+    .reveal { opacity: 1; transform: none; }
+    body.js-ready .reveal { opacity: 0; transform: translateY(28px); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 0 1.5rem; }
+      .h4-wrap { padding: 6rem 1.5rem 3rem; }
+      .h4-services { max-width: 240px; padding: 1.5rem; }
+      .h4-photo { width: 160px; height: 260px; }
+      .h4-mid { min-height: 300px; }
+      #reel { padding: 5rem 2rem; }
+      #connect { padding: 6rem 2rem; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      .h4-title { font-size: clamp(3.5rem, 18vw, 6rem); }
+      .h4-services { max-width: 180px; font-size: .9rem; }
+      .h4-photo { width: 120px; height: 200px; }
+      .h4-location { display: none; }
+      .h4-name { font-size: 1rem; letter-spacing: .2em; }
+      .nav-links { display: none; }
+      .h4-recent { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ DOTTED SURFACE BG ═══════════════════════════════════ -->
+<div id="dotted-bg" aria-hidden="true"></div>
+
+<!-- ════ NAV ═════════════════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="logo">BIHANDZ<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#reel">Reel</a></li>
+    <li><a href="#connect">Contact</a></li>
+  </ul>
+  <a href="mailto:bihandz@gmail.com" class="hire-btn">Contact</a>
+</nav>
+
+<!-- ════ HERO (Hero 04 — aliimam / 21st.dev) ═════════════════ -->
+<section id="hero">
+  <div id="h4-grid"></div>
+
+  <div class="h4-wrap">
+
+    <p class="h4-stat">2025</p>
+
+    <!-- Giant title + name -->
+    <div class="h4-title-wrap">
+      <h1 class="h4-title h4-morph reveal" id="morph-title" aria-label="VIDEO EDITOR">
+        <span class="morph-ghost" aria-hidden="true">VIDEO<br>EDITOR</span>
+        <span class="morph-t1" id="morph-t1" aria-hidden="true">VIDEO<br>EDITOR</span>
+        <span class="morph-t2" id="morph-t2" aria-hidden="true">BIHANDZ</span>
+      </h1>
+      <p class="h4-name">THAI NGUYEN</p>
+    </div>
+
+    <!-- Services (left) + Photo (center, overlapping) -->
+    <div class="h4-mid">
+
+      <!-- Services box — sits bottom-left -->
+      <div class="h4-services">
+        <div class="h4-services-list">
+          <div>/ CLEAN PROFESSIONAL CUTS</div>
+          <div>/ MOTION GRAPHICS &amp; COLOR</div>
+          <div>/ DIRECTOR AI VISUAL</div>
+          <div>/ YOUTUBE · IG · TIKTOK</div>
+        </div>
+      </div>
+
+      <!-- Photo — absolute center, overlaps title by 40px upward -->
+      <div class="h4-photo-block">
+        <img src="thai.jpg" alt="Thai Nguyen — Video Editor" class="h4-photo"/>
+        <div class="h4-location">BASED IN VIETNAM</div>
+      </div>
+
+    </div><!-- /h4-mid -->
+
+    <!-- Bio -->
+    <div class="h4-bio">
+      <p>
+        VIDEO EDITOR · 6+ YEARS EXPERIENCE<br>
+        DAVINCI RESOLVE · PREMIERE PRO · AFTER EFFECTS<br>
+        DETAIL-ORIENTED · RESPONSIVE · ALWAYS ON DEADLINE
+      </p>
+    </div>
+
+    <!-- CTAs -->
+    <div class="h4-cta">
+      <a href="#reel" class="btn-fill">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="currentColor"><path d="M3 2.5L10.5 6.5L3 10.5V2.5Z"/></svg>
+        Watch Reel
+      </a>
+      <a href="#connect" class="btn-ghost">
+        Get in Touch
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+
+    <!-- Recent work row -->
+    <div class="h4-recent">
+      <div class="h4-cards">
+        <div class="h4-card"><div class="h4-card-inner"></div></div>
+        <div class="h4-card"><div class="h4-card-inner"></div></div>
+        <div class="h4-card"><div class="h4-card-inner"></div></div>
+      </div>
+      <div class="h4-recent-text">
+        <div class="h4-recent-label">
+          SELECTED WORK
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </div>
+        <h2 class="h4-recent-title">VIDEO WITHOUT <em>LIMITS</em></h2>
+      </div>
+    </div>
+
+  </div><!-- /h4-wrap -->
+</section>
+
+<!-- ════ TICKER ═══════════════════════════════════════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item">
+      <span class="ticker-dot"></span>THAI NGUYEN
+      <span class="ticker-dot"></span><em>VIDEO EDITOR</em>
+      <span class="ticker-dot"></span>DAVINCI RESOLVE
+      <span class="ticker-dot"></span><em>PREMIERE PRO</em>
+      <span class="ticker-dot"></span>AFTER EFFECTS
+      <span class="ticker-dot"></span><em>COLOR GRADING</em>
+      <span class="ticker-dot"></span>MOTION GRAPHICS
+      <span class="ticker-dot"></span><em>6+ YEARS</em>
+      <span class="ticker-dot"></span>YOUTUBE · INSTAGRAM · TIKTOK
+      <span class="ticker-dot"></span><em>BIHANDZ</em>
+    </div>
+    <div class="ticker-item" aria-hidden="true">
+      <span class="ticker-dot"></span>THAI NGUYEN
+      <span class="ticker-dot"></span><em>VIDEO EDITOR</em>
+      <span class="ticker-dot"></span>DAVINCI RESOLVE
+      <span class="ticker-dot"></span><em>PREMIERE PRO</em>
+      <span class="ticker-dot"></span>AFTER EFFECTS
+      <span class="ticker-dot"></span><em>COLOR GRADING</em>
+      <span class="ticker-dot"></span>MOTION GRAPHICS
+      <span class="ticker-dot"></span><em>6+ YEARS</em>
+      <span class="ticker-dot"></span>YOUTUBE · INSTAGRAM · TIKTOK
+      <span class="ticker-dot"></span><em>BIHANDZ</em>
+    </div>
+  </div>
+</div>
+
+<!-- ════ REEL ═════════════════════════════════════════════════ -->
+<section id="reel">
+  <div class="section-label reveal">Showreel</div>
+  <h2 class="section-title reveal">My <em>Showreel</em></h2>
+  <p class="section-sub reveal">Fashion Show Cuts · Promotional Content · Social Media Videos · Brand Campaigns</p>
+  <div class="reel-frame">
+    <video
+      controls
+      preload="metadata"
+      poster=""
+      playsinline>
+      <source src="https://res.cloudinary.com/dgiqdfycy/video/upload/Thai_Nguyen_Portfolio_b8oppb.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
+<!-- ════ CONNECT ══════════════════════════════════════════════ -->
+<section id="connect">
+  <div class="section-label reveal">Let's Work</div>
+  <h2 class="connect-h reveal">
+    <span class="stroke">READY TO</span><br>
+    <span>MAKE SOMETHING</span><br>
+    <span style="color:var(--orange)">GREAT?</span>
+  </h2>
+  <p class="connect-sub reveal">Feel free to watch and explore my work. I'd love to help bring your video project to life — looking forward to working with you.</p>
+  <a href="mailto:bihandz@gmail.com" class="connect-email reveal">bihandz@gmail.com</a>
+  <div class="connect-socials reveal">
+    <!-- Facebook -->
+    <a href="https://www.facebook.com/bihandz" target="_blank" rel="noopener" class="social-btn">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+      </svg>
+      Facebook
+    </a>
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/bihandz" target="_blank" rel="noopener" class="social-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15">
+        <rect x="2" y="2" width="20" height="20" rx="5"/>
+        <circle cx="12" cy="12" r="5"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      Instagram
+    </a>
+    <!-- TikTok -->
+    <a href="https://www.tiktok.com/@bihandz" target="_blank" rel="noopener" class="social-btn">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+        <path d="M19.321 5.562a5.124 5.124 0 01-.443-.258 6.228 6.228 0 01-1.137-.966c-.849-.97-1.166-1.956-1.282-2.641h.004C16.368 1.249 16.392 1 16.392 1h-3.636v14.801c0 .195 0 .388-.008.579 0 .023-.002.044-.003.067v.017a3.184 3.184 0 01-3.183 2.935 3.184 3.184 0 01-3.183-3.183 3.184 3.184 0 013.183-3.183c.31 0 .607.046.888.131V9.478a6.823 6.823 0 00-.888-.058 6.82 6.82 0 00-6.82 6.82 6.82 6.82 0 006.82 6.82 6.82 6.82 0 006.82-6.82V8.516a9.831 9.831 0 005.741 1.843V6.729a6.252 6.252 0 01-3.002-1.167z"/>
+      </svg>
+      TikTok
+    </a>
+    <!-- Phone -->
+    <a href="tel:+84799484494" class="social-btn" id="phone-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15">
+        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.82 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+      </svg>
+      Call Me
+    </a>
+  </div>
+</section>
+
+<!-- ════ FOOTER ═══════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-copy">© 2025 Thai Nguyen. All rights reserved.</div>
+  <div class="footer-logo">BIHANDZ<span>.</span></div>
+</footer>
+
+<!-- ════ SCRIPTS ══════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ── Dotted Surface — Three.js particle wave ── */
+(function () {
+  const container = document.getElementById('dotted-bg');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+  camera.position.set(0, 355, 1220);
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  /* Build particle grid */
+  const positions = [];
+  const colors    = [];
+  for (let ix = 0; ix < AMOUNTX; ix++) {
+    for (let iy = 0; iy < AMOUNTY; iy++) {
+      positions.push(
+        ix * SEPARATION - (AMOUNTX * SEPARATION) / 2,
+        0,
+        iy * SEPARATION - (AMOUNTY * SEPARATION) / 2
+      );
+      /* warm near-white with slight orange tint to match brand */
+      colors.push(255, 200, 160);
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors,    3));
+
+  const material = new THREE.PointsMaterial({
+    size: 6,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.28,
+    sizeAttenuation: true,
+  });
+
+  scene.add(new THREE.Points(geometry, material));
+
+  let count = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    const posAttr = geometry.attributes.position;
+    const pos = posAttr.array;
+    let i = 0;
+    for (let ix = 0; ix < AMOUNTX; ix++) {
+      for (let iy = 0; iy < AMOUNTY; iy++) {
+        pos[i * 3 + 1] = Math.sin((ix + count) * 0.3) * 50
+                       + Math.sin((iy + count) * 0.5) * 50;
+        i++;
+      }
+    }
+    posAttr.needsUpdate = true;
+    renderer.render(scene, camera);
+    count += 0.07;
+  }
+
+  window.addEventListener('resize', function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }, { passive: true });
+
+  animate();
+})();
+</script>
+<script>
+  /* Nav scroll class — no CDN needed */
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+</script>
+<script type="module">
+  /* Motion.dev reveal — only runs if CDN loads */
+  import { animate, inView } from "https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js";
+  document.body.classList.add('js-ready');
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    inView(el, ({ target }) => {
+      animate(target, { opacity: [0, 1], y: [28, 0] },
+        { duration: 0.65, delay: (i % 4) * 0.07, ease: [0.22, 1, 0.36, 1] });
+    }, { margin: '-60px 0px' });
+  });
+</script>
+
+<!-- SVG threshold filter for liquid morph -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <filter id="morph-threshold">
+      <feColorMatrix in="SourceGraphic" type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 255 -140"/>
+    </filter>
+  </defs>
+</svg>
+
+<script>
+/* ── Liquid morph: VIDEO EDITOR ↔ BIHANDZ on hover ── */
+(function () {
+  const MORPH_TIME = 1.0; /* seconds */
+  const wrap = document.getElementById('morph-title');
+  const t1   = document.getElementById('morph-t1');
+  const t2   = document.getElementById('morph-t2');
+  if (!wrap || !t1 || !t2) return;
+
+  let frac = 0;    /* 0 = VIDEO EDITOR  |  1 = BIHANDZ */
+  let goal = 0;
+  let rafId = null;
+  let lastTs = null;
+
+  function paint(f) {
+    const s  = Math.max(1e-4, Math.min(1 - 1e-4, f));
+    const iv = 1 - s;
+    t1.style.filter  = `blur(${Math.min(8 / iv - 8, 100).toFixed(2)}px)`;
+    t1.style.opacity = Math.pow(iv, 0.4).toFixed(4);
+    t2.style.filter  = `blur(${Math.min(8 / s  - 8, 100).toFixed(2)}px)`;
+    t2.style.opacity = Math.pow(s,  0.4).toFixed(4);
+  }
+
+  function tick(ts) {
+    const dt = lastTs != null ? (ts - lastTs) / 1000 : 0;
+    lastTs = ts;
+    if (goal > frac) frac = Math.min(frac + dt / MORPH_TIME, goal);
+    else             frac = Math.max(frac - dt / MORPH_TIME, goal);
+    paint(frac);
+    if (Math.abs(frac - goal) > 1e-4) {
+      rafId = requestAnimationFrame(tick);
+    } else {
+      rafId = null; lastTs = null;
+    }
+  }
+
+  function go(t) {
+    goal = t;
+    if (!rafId) { lastTs = null; rafId = requestAnimationFrame(tick); }
+  }
+
+  wrap.addEventListener('mouseenter', () => go(1));
+  wrap.addEventListener('mouseleave', () => go(0));
+  paint(0); /* init: show VIDEO EDITOR */
+})();
+</script>
+</body>
+</html>
