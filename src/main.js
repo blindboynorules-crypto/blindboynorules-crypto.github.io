@@ -5,13 +5,18 @@ const prefersReduced = window.matchMedia(
 const coarsePointer = window.matchMedia(
   "(hover: none), (pointer: coarse)",
 ).matches;
+const mobileHeroQuery = window.matchMedia(
+  "(max-width: 700px), ((hover: none) and (pointer: coarse) and (max-width: 920px))",
+);
 const hero = document.querySelector(".hero-scroll");
 const video = document.getElementById("heroVideo");
+const videoSources = video ? [...video.querySelectorAll("source")] : [];
 const cues = [...document.querySelectorAll(".cue")];
 const progressCard = document.getElementById("progressCard");
 const progressLabel = document.getElementById("progressLabel");
 const revealItems = [...document.querySelectorAll(".reveal, .service-card")];
-const shouldScrubHeroVideo = !coarsePointer && !prefersReduced;
+const shouldScrubHeroVideo =
+  Boolean(video) && !mobileHeroQuery.matches && !prefersReduced;
 const SEEK_TOLERANCE = 0.05;
 const SCRUB_EASE = 0.16;
 let videoDuration = 0;
@@ -77,6 +82,29 @@ function requestVideoSync() {
   videoSyncRaf = requestAnimationFrame(syncVideoToScroll);
 }
 
+function loadHeroVideoForDesktop() {
+  if (!video) return;
+  video.preload = "auto";
+  videoSources.forEach((source) => {
+    const src = source.dataset.src;
+    if (src && source.getAttribute("src") !== src) {
+      source.setAttribute("src", src);
+    }
+  });
+  video.load();
+}
+
+function unloadHeroVideoForMobile() {
+  if (!video) return;
+  try {
+    video.pause();
+    video.removeAttribute("src");
+    video.preload = "none";
+    videoSources.forEach((source) => source.removeAttribute("src"));
+    video.load();
+  } catch (e) {}
+}
+
 let raf = null;
 function requestPaint() {
   if (raf) return;
@@ -88,6 +116,7 @@ function requestPaint() {
 }
 
 if (shouldScrubHeroVideo) {
+  video.addEventListener("play", () => video.pause());
   video.addEventListener(
     "loadedmetadata",
     () => {
@@ -114,14 +143,9 @@ if (shouldScrubHeroVideo) {
     },
     { once: true },
   );
+  loadHeroVideoForDesktop();
 } else if (video) {
-  try {
-    video.removeAttribute("src");
-    [...video.querySelectorAll("source")].forEach((source) => {
-      source.removeAttribute("src");
-    });
-    video.load();
-  } catch (e) {}
+  unloadHeroVideoForMobile();
 }
 window.addEventListener("scroll", requestPaint, { passive: true });
 window.addEventListener("resize", requestPaint, { passive: true });
@@ -178,24 +202,20 @@ setTimeout(() => {
     root: document.getElementById("heroMorphA"),
     top: document.getElementById("heroMorphATop"),
     bottom: document.getElementById("heroMorphABottom"),
-    blur: document.getElementById("heroLiquidBlurANode"),
   };
   const layerB = {
     root: document.getElementById("heroMorphB"),
     top: document.getElementById("heroMorphBTop"),
     bottom: document.getElementById("heroMorphBBottom"),
-    blur: document.getElementById("heroLiquidBlurBNode"),
   };
   if (
     !wrap ||
     !layerA.root ||
     !layerA.top ||
     !layerA.bottom ||
-    !layerA.blur ||
     !layerB.root ||
     !layerB.top ||
-    !layerB.bottom ||
-    !layerB.blur
+    !layerB.bottom
   ) {
     return;
   }
@@ -219,7 +239,9 @@ setTimeout(() => {
 
   function setLayerState(layer, opacity, blur) {
     layer.root.style.opacity = opacity.toFixed(4);
-    layer.blur.setAttribute("stdDeviation", Math.max(0, blur).toFixed(2));
+    const safeBlur = Math.max(0, blur);
+    layer.root.style.filter =
+      safeBlur < 0.01 ? "none" : `blur(${safeBlur.toFixed(2)}px)`;
   }
 
   function setStyles(fraction) {

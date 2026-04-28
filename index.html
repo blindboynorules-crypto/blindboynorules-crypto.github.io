@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Imperial+Script&family=Inter:wght@500;600;700;800;900&family=Pinyon+Script&family=Sofia+Sans+Condensed:wght@700;800;900&family=Spline+Sans+Mono:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="src/styles.css?v=emil-polish-1" />
+    <link rel="stylesheet" href="src/styles.css?v=morph-scroll-fix-1" />
   </head>
   <body>
     <nav class="site-nav" aria-label="Primary">
@@ -48,15 +48,15 @@
           muted
           playsinline
           webkit-playsinline
-          preload="metadata"
+          preload="none"
           poster="https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777368912/thai_video_kk1j87.jpg"
         >
           <source
-            src="https://res.cloudinary.com/dgiqdfycy/video/upload/f_mp4,vc_h264,q_auto/v1777368912/thai_video_kk1j87.mp4"
+            data-src="https://res.cloudinary.com/dgiqdfycy/video/upload/f_mp4,vc_h264,q_auto/v1777368912/thai_video_kk1j87.mp4"
             type="video/mp4"
           />
           <source
-            src="https://res.cloudinary.com/dgiqdfycy/video/upload/f_mp4,vc_h264,q_auto/Thai_Nguyen_Portfolio_b8oppb.mp4"
+            data-src="https://res.cloudinary.com/dgiqdfycy/video/upload/f_mp4,vc_h264,q_auto/Thai_Nguyen_Portfolio_b8oppb.mp4"
             type="video/mp4"
           />
         </video>
@@ -69,20 +69,36 @@
               id="heroMorphTitle"
               aria-label="Video Editor - Thai Nguyen"
             >
-              <svg
-                class="liquid-title-svg"
-                viewBox="0 0 900 300"
-                preserveAspectRatio="xMinYMin meet"
-                aria-hidden="true"
-                focusable="false"
-              >
+              <span class="liquid-title-stage" aria-hidden="true">
+                <span class="liquid-title-layer" id="heroMorphA">
+                  <span
+                    class="liquid-title-line liquid-title-line--accent"
+                    id="heroMorphATop"
+                    >VIDEO</span
+                  >
+                  <span
+                    class="liquid-title-line liquid-title-line--ink"
+                    id="heroMorphABottom"
+                    >EDITOR.</span
+                  >
+                </span>
+                <span class="liquid-title-layer" id="heroMorphB">
+                  <span
+                    class="liquid-title-line liquid-title-line--accent"
+                    id="heroMorphBTop"
+                    >THAI</span
+                  >
+                  <span
+                    class="liquid-title-line liquid-title-line--ink"
+                    id="heroMorphBBottom"
+                    >NGUYEN.</span
+                  >
+                </span>
+              </span>
+              <svg class="liquid-title-filter" aria-hidden="true">
                 <defs>
                   <filter
                     id="heroLiquidThreshold"
-                    x="-20%"
-                    y="-35%"
-                    width="140%"
-                    height="180%"
                     color-interpolation-filters="sRGB"
                   >
                     <feColorMatrix
@@ -94,84 +110,7 @@
                               0 0 0 255 -140"
                     />
                   </filter>
-                  <filter
-                    id="heroLiquidBlurA"
-                    x="-20%"
-                    y="-35%"
-                    width="140%"
-                    height="180%"
-                    color-interpolation-filters="sRGB"
-                  >
-                    <feGaussianBlur
-                      id="heroLiquidBlurANode"
-                      in="SourceGraphic"
-                      stdDeviation="0"
-                    />
-                  </filter>
-                  <filter
-                    id="heroLiquidBlurB"
-                    x="-20%"
-                    y="-35%"
-                    width="140%"
-                    height="180%"
-                    color-interpolation-filters="sRGB"
-                  >
-                    <feGaussianBlur
-                      id="heroLiquidBlurBNode"
-                      in="SourceGraphic"
-                      stdDeviation="0"
-                    />
-                  </filter>
                 </defs>
-                <g
-                  class="liquid-title-stage"
-                  filter="url(#heroLiquidThreshold)"
-                >
-                  <g
-                    class="liquid-title-layer"
-                    id="heroMorphA"
-                    filter="url(#heroLiquidBlurA)"
-                  >
-                    <text
-                      class="liquid-title-word liquid-title-word--accent"
-                      id="heroMorphATop"
-                      x="0"
-                      y="116"
-                    >
-                      VIDEO
-                    </text>
-                    <text
-                      class="liquid-title-word liquid-title-word--ink"
-                      id="heroMorphABottom"
-                      x="0"
-                      y="238"
-                    >
-                      EDITOR.
-                    </text>
-                  </g>
-                  <g
-                    class="liquid-title-layer"
-                    id="heroMorphB"
-                    filter="url(#heroLiquidBlurB)"
-                  >
-                    <text
-                      class="liquid-title-word liquid-title-word--accent"
-                      id="heroMorphBTop"
-                      x="0"
-                      y="116"
-                    >
-                      THAI
-                    </text>
-                    <text
-                      class="liquid-title-word liquid-title-word--ink"
-                      id="heroMorphBBottom"
-                      x="0"
-                      y="238"
-                    >
-                      NGUYEN.
-                    </text>
-                  </g>
-                </g>
               </svg>
             </h1>
             <p class="hero-copy">
@@ -396,6 +335,6 @@
       </section>
     </main>
 
-    <script type="module" src="src/main.js?v=hero-mode-1"></script>
+    <script type="module" src="src/main.js?v=morph-scroll-fix-1"></script>
   </body>
 </html>
