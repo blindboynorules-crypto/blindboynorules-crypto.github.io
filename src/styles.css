@@ -1182,12 +1182,16 @@ body.motion-ready .service-card:not(.revealed) {
     background: rgba(5, 5, 5, 0.72);
   }
   .hero-title {
-    margin-top: 14px;
-    height: clamp(140px, 42vw, 170px);
+    margin-top: 16px;
+    height: clamp(170px, 56vw, 240px);
   }
   .liquid-title-line {
-    font-size: clamp(68px, 20vw, 92px);
-    line-height: 0.74;
+    font-size: clamp(82px, 26vw, 124px);
+    letter-spacing: -0.052em;
+    line-height: 0.77;
+  }
+  .liquid-title-stage {
+    filter: url(#heroLiquidThreshold) blur(0.6px);
   }
   .hero-copy {
     max-width: 340px;
