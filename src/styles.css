@@ -776,37 +776,74 @@ section {
   flex-direction: column;
   justify-content: space-between;
   background:
+    linear-gradient(
+      100deg,
+      rgba(243, 242, 239, 0.96) 0%,
+      rgba(243, 242, 239, 0.74) 52%,
+      rgba(238, 232, 222, 0.94) 100%
+    ),
     radial-gradient(
-      circle at 82% 22%,
-      rgba(249, 115, 22, 0.2),
-      transparent 24rem
+      ellipse at 72% 28%,
+      rgba(249, 115, 22, 0.26),
+      transparent 30rem
     ),
     #f3f2ef;
   color: #101010;
   overflow: hidden;
   isolation: isolate;
 }
+.contact-section::before {
+  content: "";
+  position: absolute;
+  inset: 9% -18% auto 22%;
+  z-index: 0;
+  height: 56%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.78),
+    rgba(249, 115, 22, 0.16) 36%,
+    rgba(16, 16, 16, 0.08) 58%,
+    transparent 74%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+}
 .contact-dotted-surface {
   position: absolute;
-  inset: 0;
+  inset: -8% -6% -10%;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.72;
+  opacity: 0.86;
   mix-blend-mode: multiply;
   mask-image: linear-gradient(
     180deg,
     transparent 0,
-    #000 16%,
-    #000 88%,
+    #000 9%,
+    #000 90%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     180deg,
     transparent 0,
-    #000 16%,
-    #000 88%,
+    #000 9%,
+    #000 90%,
     transparent 100%
   );
+}
+.contact-dotted-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(243, 242, 239, 0.7),
+      transparent 34%,
+      transparent 68%,
+      rgba(243, 242, 239, 0.66)
+    ),
+    linear-gradient(180deg, rgba(243, 242, 239, 0.36), transparent 44%);
+  pointer-events: none;
 }
 .contact-dotted-surface canvas {
   display: block;
@@ -815,7 +852,7 @@ section {
 }
 .contact-shell {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
   gap: clamp(30px, 6vw, 92px);
@@ -865,7 +902,7 @@ section {
 }
 .footer-block {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   margin-top: clamp(76px, 10vw, 126px);
 }
 .footer-logo {

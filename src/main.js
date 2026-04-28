@@ -326,12 +326,14 @@ setTimeout(() => {
     return;
   }
 
-  const amountX = coarsePointer ? 22 : 34;
-  const amountY = coarsePointer ? 28 : 46;
-  const separation = coarsePointer ? 138 : 128;
+  const amountX = coarsePointer ? 24 : 40;
+  const amountY = coarsePointer ? 36 : 60;
+  const separation = coarsePointer ? 134 : 150;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, 1, 1, 10000);
-  camera.position.set(0, 390, 1180);
+  scene.fog = new THREE.Fog(0xf3f2ef, 1800, 9000);
+
+  const camera = new THREE.PerspectiveCamera(60, 1, 1, 10000);
+  camera.position.set(0, 355, 1220);
 
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -341,7 +343,7 @@ setTimeout(() => {
   renderer.setPixelRatio(
     Math.min(window.devicePixelRatio || 1, coarsePointer ? 1.2 : 1.6),
   );
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(scene.fog.color, 0);
   container.appendChild(renderer.domElement);
 
   const positions = [];
@@ -356,9 +358,11 @@ setTimeout(() => {
         iy * separation - (amountY * separation) / 2,
       );
 
-      const warmPoint = (ix + iy) % 7 === 0;
-      if (warmPoint) colors.push(0.98, 0.45, 0.1);
-      else colors.push(0.12, 0.105, 0.09);
+      const warmPoint = (ix * 3 + iy) % 11 === 0;
+      const palePoint = (ix + iy * 2) % 13 === 0;
+      if (warmPoint) colors.push(0.98, 0.42, 0.06);
+      else if (palePoint) colors.push(0.74, 0.68, 0.58);
+      else colors.push(0.055, 0.052, 0.048);
     }
   }
 
@@ -369,14 +373,17 @@ setTimeout(() => {
   geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: coarsePointer ? 5.5 : 6.8,
+    size: coarsePointer ? 5.8 : 8,
     vertexColors: true,
     transparent: true,
-    opacity: coarsePointer ? 0.22 : 0.3,
+    opacity: coarsePointer ? 0.34 : 0.46,
     sizeAttenuation: true,
+    depthWrite: false,
   });
 
   const points = new THREE.Points(geometry, material);
+  points.position.y = coarsePointer ? 170 : 120;
+  points.rotation.x = -0.08;
   scene.add(points);
 
   let frame = null;
@@ -404,16 +411,15 @@ setTimeout(() => {
       for (let iy = 0; iy < amountY; iy++) {
         const index = i * 3;
         particlePositions[index + 1] =
-          Math.sin((ix + count) * 0.28) * 42 +
-          Math.sin((iy + count) * 0.44) * 42;
+          Math.sin((ix + count) * 0.3) * 50 + Math.sin((iy + count) * 0.5) * 50;
         i++;
       }
     }
 
-    points.rotation.y = Math.sin(count * 0.025) * 0.04;
+    points.rotation.y = Math.sin(count * 0.018) * 0.055;
     positionAttribute.needsUpdate = true;
     renderer.render(scene, camera);
-    count += coarsePointer ? 0.045 : 0.075;
+    count += coarsePointer ? 0.045 : 0.08;
   }
 
   function startDottedSurface() {
