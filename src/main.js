@@ -17,12 +17,13 @@ const progressLabel = document.getElementById("progressLabel");
 const revealItems = [...document.querySelectorAll(".reveal, .service-card")];
 const shouldScrubHeroVideo =
   Boolean(video) && !mobileHeroQuery.matches && !prefersReduced;
-const SEEK_TOLERANCE = 0.05;
-const SCRUB_EASE = 0.16;
+const SEEK_TOLERANCE = 0.035;
+const LARGE_SEEK_DELTA = 0.9;
+const REVERSE_SEEK_INTERVAL = 90;
 let videoDuration = 0;
 let targetTime = 0;
-let scrubTime = 0;
 let videoSyncRaf = null;
+let lastSeekAt = 0;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -57,22 +58,51 @@ function syncVideoToScroll() {
   }
 
   const safeTarget = clamp(targetTime, 0, Math.max(0, videoDuration - 0.05));
-  const delta = safeTarget - scrubTime;
-  scrubTime += delta * SCRUB_EASE;
+  const currentTime = video.currentTime || 0;
+  const delta = safeTarget - currentTime;
+  const distance = Math.abs(delta);
 
-  if (Math.abs(delta) < SEEK_TOLERANCE) {
-    scrubTime = safeTarget;
+  if (distance <= SEEK_TOLERANCE) {
+    try {
+      if (!video.paused) video.pause();
+      video.playbackRate = 1;
+      if (!video.seeking && distance > 0.012) video.currentTime = safeTarget;
+    } catch (e) {}
+    return;
+  }
+
+  if (video.seeking) {
+    requestVideoSync();
+    return;
   }
 
   try {
-    if (!video.paused) video.pause();
-    video.playbackRate = 1;
-    if (Math.abs((video.currentTime || 0) - scrubTime) > 0.012) {
-      video.currentTime = scrubTime;
+    if (delta > 0 && video.readyState >= 2) {
+      if (distance > LARGE_SEEK_DELTA) {
+        video.pause();
+        video.playbackRate = 1;
+        video.currentTime = Math.max(0, safeTarget - 0.18);
+      } else {
+        video.playbackRate = clamp(distance * 3.1, 0.25, 2.5);
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {
+            if (!video.seeking) video.currentTime = safeTarget;
+          });
+        }
+      }
+    } else {
+      const now = performance.now();
+      if (now - lastSeekAt > REVERSE_SEEK_INTERVAL) {
+        video.pause();
+        video.playbackRate = 1;
+        video.currentTime = safeTarget;
+        lastSeekAt = now;
+      }
     }
   } catch (e) {}
 
-  if (Math.abs(safeTarget - scrubTime) > SEEK_TOLERANCE) {
+  if (Math.abs(safeTarget - (video.currentTime || 0)) > SEEK_TOLERANCE) {
     requestVideoSync();
   }
 }
@@ -116,7 +146,6 @@ function requestPaint() {
 }
 
 if (shouldScrubHeroVideo) {
-  video.addEventListener("play", () => video.pause());
   video.addEventListener(
     "loadedmetadata",
     () => {
@@ -127,7 +156,6 @@ if (shouldScrubHeroVideo) {
         video.disableRemotePlayback = true;
         video.pause();
         video.currentTime = 0;
-        scrubTime = 0;
       } catch (e) {}
       paintHero();
       requestVideoSync();
@@ -143,6 +171,9 @@ if (shouldScrubHeroVideo) {
     },
     { once: true },
   );
+  video.addEventListener("seeked", requestVideoSync);
+  video.addEventListener("waiting", requestVideoSync);
+  video.addEventListener("pause", requestVideoSync);
   loadHeroVideoForDesktop();
 } else if (video) {
   unloadHeroVideoForMobile();
