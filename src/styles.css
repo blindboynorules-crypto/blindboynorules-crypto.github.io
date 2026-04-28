@@ -14,6 +14,7 @@
   --mono: "Spline Sans Mono", "Courier New", monospace;
   --sans: "Inter", system-ui, sans-serif;
   --ease: cubic-bezier(0.11, 0.82, 0.39, 0.92);
+  --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777368912/thai_video_kk1j87.jpg");
 }
 
 * {
@@ -973,15 +974,31 @@ body.motion-ready .service-card:not(.revealed) {
     height: 52px;
   }
   .hero-scroll {
-    height: 330vh;
+    height: auto;
+    min-height: 100svh;
   }
   .hero-sticky {
+    position: relative;
+    height: auto;
     min-height: 810px;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(6, 6, 6, 0.86),
+        rgba(6, 6, 6, 0.54) 52%,
+        rgba(6, 6, 6, 0.82)
+      ),
+      linear-gradient(180deg, rgba(6, 6, 6, 0.14), rgba(6, 6, 6, 0.9)),
+      var(--mobile-hero-image) center / cover no-repeat;
+  }
+  .hero-video {
+    display: none;
   }
   .hero-content {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    min-height: 810px;
     padding: 88px 16px 30px;
   }
   .hero-left {

@@ -11,9 +11,13 @@ const cues = [...document.querySelectorAll(".cue")];
 const progressCard = document.getElementById("progressCard");
 const progressLabel = document.getElementById("progressLabel");
 const revealItems = [...document.querySelectorAll(".reveal, .service-card")];
+const shouldScrubHeroVideo = !coarsePointer && !prefersReduced;
 const SEEK_TOLERANCE = 0.05;
+const SCRUB_EASE = 0.16;
 let videoDuration = 0;
 let targetTime = 0;
+let scrubTime = 0;
+let videoSyncRaf = null;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -27,10 +31,9 @@ function heroProgress() {
 
 function paintHero() {
   const p = heroProgress();
-  const duration = videoDuration || video.duration || 0;
 
-  if (!prefersReduced && Number.isFinite(duration) && duration > 0) {
-    targetTime = p * Math.max(0, duration - 0.12);
+  if (shouldScrubHeroVideo && videoDuration > 0) {
+    targetTime = p * Math.max(0, videoDuration - 0.12);
   }
 
   const cueIndex = Math.min(cues.length - 1, Math.floor(p * cues.length));
@@ -43,19 +46,35 @@ function paintHero() {
 }
 
 function syncVideoToScroll() {
-  if (!prefersReduced && video.readyState >= 1 && videoDuration > 0) {
-    const current = video.currentTime || 0;
-    const safeTarget = clamp(targetTime, 0, Math.max(0, videoDuration - 0.05));
-    const seekTolerance = coarsePointer ? 0.12 : SEEK_TOLERANCE;
-
-    try {
-      if (!video.paused) video.pause();
-      video.playbackRate = 1;
-      if (Math.abs(safeTarget - current) > seekTolerance) {
-        video.currentTime = safeTarget;
-      }
-    } catch (e) {}
+  videoSyncRaf = null;
+  if (!shouldScrubHeroVideo || video.readyState < 1 || videoDuration <= 0) {
+    return;
   }
+
+  const safeTarget = clamp(targetTime, 0, Math.max(0, videoDuration - 0.05));
+  const delta = safeTarget - scrubTime;
+  scrubTime += delta * SCRUB_EASE;
+
+  if (Math.abs(delta) < SEEK_TOLERANCE) {
+    scrubTime = safeTarget;
+  }
+
+  try {
+    if (!video.paused) video.pause();
+    video.playbackRate = 1;
+    if (Math.abs((video.currentTime || 0) - scrubTime) > 0.012) {
+      video.currentTime = scrubTime;
+    }
+  } catch (e) {}
+
+  if (Math.abs(safeTarget - scrubTime) > SEEK_TOLERANCE) {
+    requestVideoSync();
+  }
+}
+
+function requestVideoSync() {
+  if (!shouldScrubHeroVideo || videoSyncRaf) return;
+  videoSyncRaf = requestAnimationFrame(syncVideoToScroll);
 }
 
 let raf = null;
@@ -64,35 +83,46 @@ function requestPaint() {
   raf = requestAnimationFrame(() => {
     raf = null;
     paintHero();
-    syncVideoToScroll();
+    requestVideoSync();
   });
 }
 
-video.addEventListener(
-  "loadedmetadata",
-  () => {
-    videoDuration = video.duration || 0;
-    try {
-      video.muted = true;
-      video.playsInline = true;
-      video.disableRemotePlayback = true;
+if (shouldScrubHeroVideo) {
+  video.addEventListener(
+    "loadedmetadata",
+    () => {
+      videoDuration = video.duration || 0;
+      try {
+        video.muted = true;
+        video.playsInline = true;
+        video.disableRemotePlayback = true;
+        video.pause();
+        video.currentTime = 0;
+        scrubTime = 0;
+      } catch (e) {}
+      paintHero();
+      requestVideoSync();
+    },
+    { once: true },
+  );
+  video.addEventListener(
+    "canplay",
+    () => {
       video.pause();
-      video.currentTime = 0;
-    } catch (e) {}
-    paintHero();
-    syncVideoToScroll();
-  },
-  { once: true },
-);
-video.addEventListener(
-  "canplay",
-  () => {
-    video.pause();
-    paintHero();
-    syncVideoToScroll();
-  },
-  { once: true },
-);
+      paintHero();
+      requestVideoSync();
+    },
+    { once: true },
+  );
+} else if (video) {
+  try {
+    video.removeAttribute("src");
+    [...video.querySelectorAll("source")].forEach((source) => {
+      source.removeAttribute("src");
+    });
+    video.load();
+  } catch (e) {}
+}
 window.addEventListener("scroll", requestPaint, { passive: true });
 window.addEventListener("resize", requestPaint, { passive: true });
 paintHero();
