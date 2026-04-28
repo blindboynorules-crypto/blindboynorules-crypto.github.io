@@ -59,19 +59,114 @@
           <div class="hero-left">
             <span class="eyebrow">Thai Nguyen / BIHANDZ</span>
             <h1
-              class="hero-title hero-morph"
+              class="hero-title hero-morph liquid-title"
               id="heroMorphTitle"
               aria-label="Video Editor - Thai Nguyen"
             >
-              <span class="morph-ghost" aria-hidden="true"
-                >Video<br /><span>editor.</span></span
+              <svg
+                class="liquid-title-svg"
+                viewBox="0 0 900 300"
+                preserveAspectRatio="xMinYMin meet"
+                aria-hidden="true"
+                focusable="false"
               >
-              <span class="morph-layer" id="heroMorphA" aria-hidden="true"
-                >Video<br /><span>editor.</span></span
-              >
-              <span class="morph-layer" id="heroMorphB" aria-hidden="true"
-                >Thai<br /><span>Nguyen.</span></span
-              >
+                <defs>
+                  <filter
+                    id="heroLiquidThreshold"
+                    x="-20%"
+                    y="-35%"
+                    width="140%"
+                    height="180%"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feColorMatrix
+                      in="SourceGraphic"
+                      type="matrix"
+                      values="1 0 0 0 0
+                              0 1 0 0 0
+                              0 0 1 0 0
+                              0 0 0 255 -140"
+                    />
+                  </filter>
+                  <filter
+                    id="heroLiquidBlurA"
+                    x="-20%"
+                    y="-35%"
+                    width="140%"
+                    height="180%"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feGaussianBlur
+                      id="heroLiquidBlurANode"
+                      in="SourceGraphic"
+                      stdDeviation="0"
+                    />
+                  </filter>
+                  <filter
+                    id="heroLiquidBlurB"
+                    x="-20%"
+                    y="-35%"
+                    width="140%"
+                    height="180%"
+                    color-interpolation-filters="sRGB"
+                  >
+                    <feGaussianBlur
+                      id="heroLiquidBlurBNode"
+                      in="SourceGraphic"
+                      stdDeviation="0"
+                    />
+                  </filter>
+                </defs>
+                <g
+                  class="liquid-title-stage"
+                  filter="url(#heroLiquidThreshold)"
+                >
+                  <g
+                    class="liquid-title-layer"
+                    id="heroMorphA"
+                    filter="url(#heroLiquidBlurA)"
+                  >
+                    <text
+                      class="liquid-title-word liquid-title-word--accent"
+                      id="heroMorphATop"
+                      x="0"
+                      y="116"
+                    >
+                      VIDEO
+                    </text>
+                    <text
+                      class="liquid-title-word liquid-title-word--ink"
+                      id="heroMorphABottom"
+                      x="0"
+                      y="238"
+                    >
+                      EDITOR.
+                    </text>
+                  </g>
+                  <g
+                    class="liquid-title-layer"
+                    id="heroMorphB"
+                    filter="url(#heroLiquidBlurB)"
+                  >
+                    <text
+                      class="liquid-title-word liquid-title-word--accent"
+                      id="heroMorphBTop"
+                      x="0"
+                      y="116"
+                    >
+                      THAI
+                    </text>
+                    <text
+                      class="liquid-title-word liquid-title-word--ink"
+                      id="heroMorphBBottom"
+                      x="0"
+                      y="238"
+                    >
+                      NGUYEN.
+                    </text>
+                  </g>
+                </g>
+              </svg>
             </h1>
             <p class="hero-copy">
               I cut fashion shows, product videos, promotional films, social

@@ -245,53 +245,57 @@ button {
   display: block;
   width: min(900px, 100%);
   max-width: 900px;
+  aspect-ratio: 900 / 300;
   margin-top: 18px;
   font-family: var(--display);
   font-size: clamp(82px, 14vw, 198px);
   font-weight: 900;
-  letter-spacing: -0.075em;
-  line-height: 0.74;
+  letter-spacing: 0;
+  line-height: 1;
   text-transform: uppercase;
   color: var(--orange);
-  text-wrap: balance;
-}
-.hero-title span {
-  color: var(--ink);
+  overflow: visible;
 }
 .hero-morph {
   cursor: default;
 }
-.hero-title .morph-ghost,
-.hero-title .morph-layer {
-  color: var(--orange);
-}
-.hero-title .morph-ghost span,
-.hero-title .morph-layer span {
-  color: var(--ink);
-}
-.morph-ghost {
+.liquid-title-svg {
   display: block;
-  visibility: hidden;
-  user-select: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
   pointer-events: none;
 }
-.morph-layer {
-  position: absolute;
-  inset: 0 auto auto 0;
-  display: block;
-  width: 100%;
-  transform: translateY(0);
-  will-change: opacity, filter, transform;
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
+.liquid-title-stage {
+  transform: translateZ(0);
+}
+.liquid-title-layer {
+  opacity: 0;
+  will-change: opacity;
 }
 #heroMorphA {
   opacity: 1;
 }
 #heroMorphB {
   opacity: 0;
-  filter: blur(9px);
-  transform: translateY(8px);
+}
+.liquid-title-word {
+  font-family: var(--display);
+  font-size: 154px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  dominant-baseline: alphabetic;
+  -webkit-font-smoothing: antialiased;
+}
+.liquid-title-word--accent {
+  fill: var(--orange);
+}
+.liquid-title-word--ink {
+  fill: var(--ink);
 }
 .hero-copy {
   margin-top: 24px;

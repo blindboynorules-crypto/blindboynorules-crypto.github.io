@@ -190,76 +190,121 @@ setTimeout(() => {
 
 (function () {
   const wrap = document.getElementById("heroMorphTitle");
-  const textA = document.getElementById("heroMorphA");
-  const textB = document.getElementById("heroMorphB");
-  if (!wrap || !textA || !textB) return;
+  const layerA = {
+    root: document.getElementById("heroMorphA"),
+    top: document.getElementById("heroMorphATop"),
+    bottom: document.getElementById("heroMorphABottom"),
+    blur: document.getElementById("heroLiquidBlurANode"),
+  };
+  const layerB = {
+    root: document.getElementById("heroMorphB"),
+    top: document.getElementById("heroMorphBTop"),
+    bottom: document.getElementById("heroMorphBBottom"),
+    blur: document.getElementById("heroLiquidBlurBNode"),
+  };
+  if (
+    !wrap ||
+    !layerA.root ||
+    !layerA.top ||
+    !layerA.bottom ||
+    !layerA.blur ||
+    !layerB.root ||
+    !layerB.top ||
+    !layerB.bottom ||
+    !layerB.blur
+  ) {
+    return;
+  }
 
-  const morphTime = 1.05;
-  let fraction = 0;
-  let goal = 0;
+  const titleStates = [
+    { top: "VIDEO", bottom: "EDITOR." },
+    { top: "THAI", bottom: "NGUYEN." },
+  ];
+  const morphTime = 1.5;
+  const cooldownTime = 0.5;
+  let textIndex = 0;
+  let morph = 0;
+  let cooldown = cooldownTime;
+  let lastTs = performance.now();
   let rafId = null;
-  let lastTs = null;
-  let autoTimer = null;
 
-  function paintMorph(value) {
-    const eased = value * value * (3 - 2 * value);
-    const inverse = 1 - eased;
-    const maxBlur = coarsePointer ? 9 : 16;
-    const lift = coarsePointer ? 8 : 12;
-
-    textA.style.filter = `blur(${(eased * maxBlur).toFixed(2)}px)`;
-    textA.style.opacity = inverse.toFixed(4);
-    textA.style.transform = `translateY(${(-eased * lift).toFixed(2)}px)`;
-    textB.style.filter = `blur(${(inverse * maxBlur).toFixed(2)}px)`;
-    textB.style.opacity = eased.toFixed(4);
-    textB.style.transform = `translateY(${(inverse * lift).toFixed(2)}px)`;
+  function setLayerText(layer, state) {
+    layer.top.textContent = state.top;
+    layer.bottom.textContent = state.bottom;
   }
 
-  function tick(ts) {
-    const dt = lastTs != null ? (ts - lastTs) / 1000 : 0;
+  function setLayerState(layer, opacity, blur) {
+    layer.root.style.opacity = opacity.toFixed(4);
+    layer.blur.setAttribute("stdDeviation", Math.max(0, blur).toFixed(2));
+  }
+
+  function setStyles(fraction) {
+    const f = clamp(fraction, 0.0001, 0.9999);
+    const current = titleStates[textIndex % titleStates.length];
+    const next = titleStates[(textIndex + 1) % titleStates.length];
+
+    setLayerText(layerA, current);
+    setLayerText(layerB, next);
+
+    const inverted = 1 - f;
+    setLayerState(layerB, Math.pow(f, 0.4), Math.min(8 / f - 8, 100));
+    setLayerState(
+      layerA,
+      Math.pow(inverted, 0.4),
+      Math.min(8 / inverted - 8, 100),
+    );
+  }
+
+  function doMorph() {
+    morph -= cooldown;
+    cooldown = 0;
+
+    let fraction = morph / morphTime;
+    if (fraction > 1) {
+      cooldown = cooldownTime;
+      fraction = 1;
+    }
+
+    setStyles(fraction);
+
+    if (fraction === 1) {
+      textIndex++;
+    }
+  }
+
+  function doCooldown() {
+    morph = 0;
+    const current = titleStates[textIndex % titleStates.length];
+    const next = titleStates[(textIndex + 1) % titleStates.length];
+    setLayerText(layerA, next);
+    setLayerText(layerB, current);
+    setLayerState(layerA, 0, 0);
+    setLayerState(layerB, 1, 0);
+  }
+
+  function animate(ts) {
+    const dt = (ts - lastTs) / 1000;
     lastTs = ts;
+    cooldown -= dt;
 
-    if (goal > fraction) fraction = Math.min(goal, fraction + dt / morphTime);
-    else fraction = Math.max(goal, fraction - dt / morphTime);
+    if (cooldown <= 0) doMorph();
+    else doCooldown();
 
-    paintMorph(fraction);
-    if (Math.abs(fraction - goal) > 0.0001) {
-      rafId = requestAnimationFrame(tick);
-    } else {
-      rafId = null;
-      lastTs = null;
-    }
+    rafId = requestAnimationFrame(animate);
   }
 
-  function morphTo(value) {
-    goal = value;
-    if (!rafId) {
-      lastTs = null;
-      rafId = requestAnimationFrame(tick);
-    }
+  setLayerText(layerA, titleStates[0]);
+  setLayerText(layerB, titleStates[1]);
+  setLayerState(layerA, 1, 0);
+  setLayerState(layerB, 0, 100);
+
+  if (!prefersReduced) {
+    rafId = requestAnimationFrame(animate);
   }
 
-  function startTouchAutoMorph() {
-    if (autoTimer || prefersReduced) return;
-    autoTimer = window.setInterval(() => {
-      morphTo(goal === 0 ? 1 : 0);
-    }, 2800);
-  }
-
-  wrap.addEventListener("mouseenter", () => morphTo(1));
-  wrap.addEventListener("mouseleave", () => morphTo(0));
-  wrap.addEventListener("click", () => morphTo(goal === 0 ? 1 : 0));
-  wrap.addEventListener(
-    "touchstart",
-    () => {
-      morphTo(goal === 0 ? 1 : 0);
-      startTouchAutoMorph();
-    },
-    { passive: true },
-  );
-
-  if (coarsePointer) startTouchAutoMorph();
-  paintMorph(0);
+  window.addEventListener("pagehide", () => {
+    if (rafId) cancelAnimationFrame(rafId);
+  });
 })();
 
 (async function () {
