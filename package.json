@@ -1,0 +1,20 @@
+{
+  "name": "thai-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "format": "prettier --write index.html src/**/*.{css,js} EDITING.md"
+  },
+  "dependencies": {
+    "motion": "^12.38.0",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3",
+    "vite": "^8.0.10"
+  }
+}
