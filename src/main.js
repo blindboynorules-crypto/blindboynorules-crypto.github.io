@@ -357,9 +357,9 @@ setTimeout(() => {
     return;
   }
 
-  const amountX = coarsePointer ? 24 : 40;
-  const amountY = coarsePointer ? 36 : 60;
-  const separation = coarsePointer ? 134 : 150;
+  const amountX = coarsePointer ? 32 : 52;
+  const amountY = coarsePointer ? 48 : 78;
+  const separation = coarsePointer ? 100 : 110;
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xf3f2ef, 1800, 9000);
 
@@ -404,10 +404,10 @@ setTimeout(() => {
   geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
   const material = new THREE.PointsMaterial({
-    size: coarsePointer ? 5.8 : 8,
+    size: coarsePointer ? 3.2 : 4,
     vertexColors: true,
     transparent: true,
-    opacity: coarsePointer ? 0.34 : 0.46,
+    opacity: coarsePointer ? 0.42 : 0.52,
     sizeAttenuation: true,
     depthWrite: false,
   });
