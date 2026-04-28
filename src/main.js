@@ -202,12 +202,17 @@ setTimeout(() => {
   let autoTimer = null;
 
   function paintMorph(value) {
-    const s = clamp(value, 0.0001, 0.9999);
-    const inverse = 1 - s;
-    textA.style.filter = `blur(${Math.min(8 / inverse - 8, 80).toFixed(2)}px)`;
-    textA.style.opacity = Math.pow(inverse, 0.4).toFixed(4);
-    textB.style.filter = `blur(${Math.min(8 / s - 8, 80).toFixed(2)}px)`;
-    textB.style.opacity = Math.pow(s, 0.4).toFixed(4);
+    const eased = value * value * (3 - 2 * value);
+    const inverse = 1 - eased;
+    const maxBlur = coarsePointer ? 9 : 16;
+    const lift = coarsePointer ? 8 : 12;
+
+    textA.style.filter = `blur(${(eased * maxBlur).toFixed(2)}px)`;
+    textA.style.opacity = inverse.toFixed(4);
+    textA.style.transform = `translateY(${(-eased * lift).toFixed(2)}px)`;
+    textB.style.filter = `blur(${(inverse * maxBlur).toFixed(2)}px)`;
+    textB.style.opacity = eased.toFixed(4);
+    textB.style.transform = `translateY(${(inverse * lift).toFixed(2)}px)`;
   }
 
   function tick(ts) {

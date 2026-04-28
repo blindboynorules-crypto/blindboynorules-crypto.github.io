@@ -39,9 +39,7 @@
         <video
           class="hero-video"
           id="heroVideo"
-          autoplay
           muted
-          loop
           playsinline
           webkit-playsinline
           preload="auto"
@@ -290,25 +288,6 @@
         </div>
       </section>
     </main>
-
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      style="position: absolute; width: 0; height: 0; overflow: hidden"
-      aria-hidden="true"
-    >
-      <defs>
-        <filter id="morph-threshold">
-          <feColorMatrix
-            in="SourceGraphic"
-            type="matrix"
-            values="1 0 0 0 0
-                  0 1 0 0 0
-                  0 0 1 0 0
-                  0 0 0 255 -140"
-          />
-        </filter>
-      </defs>
-    </svg>
 
     <script type="module" src="src/main.js"></script>
   </body>

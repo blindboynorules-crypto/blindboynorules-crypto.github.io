@@ -260,7 +260,6 @@ button {
 }
 .hero-morph {
   cursor: default;
-  filter: url(#morph-threshold) blur(0.45px);
 }
 .hero-title .morph-ghost,
 .hero-title .morph-layer {
@@ -281,7 +280,18 @@ button {
   inset: 0 auto auto 0;
   display: block;
   width: 100%;
-  will-change: opacity, filter;
+  transform: translateY(0);
+  will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+#heroMorphA {
+  opacity: 1;
+}
+#heroMorphB {
+  opacity: 0;
+  filter: blur(9px);
+  transform: translateY(8px);
 }
 .hero-copy {
   margin-top: 24px;
