@@ -23,7 +23,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Imperial+Script&family=Inter:wght@500;600;700;800;900&family=Pinyon+Script&family=Sofia+Sans+Condensed:wght@700;800;900&family=Spline+Sans+Mono:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="src/styles.css?v=smooth-scroll-video-1" />
+    <link rel="stylesheet" href="src/styles.css?v=reel-redesign-1" />
   </head>
   <body>
     <nav class="site-nav" aria-label="Primary">
@@ -225,7 +225,14 @@
           </p>
         </div>
         <div class="reel-frame reveal">
-          <video controls playsinline preload="metadata">
+          <video
+            controls
+            playsinline
+            preload="metadata"
+            controlsList="nodownload noplaybackrate"
+            disablepictureinpicture
+            poster="https://res.cloudinary.com/dgiqdfycy/video/upload/so_45,e_brightness:-20,e_saturation:-35,e_contrast:10,f_jpg,q_auto,w_1600/Thai_Nguyen_Portfolio_b8oppb.jpg"
+          >
             <source
               src="https://res.cloudinary.com/dgiqdfycy/video/upload/f_mp4,vc_h264,q_auto/Thai_Nguyen_Portfolio_b8oppb.mp4"
               type="video/mp4"
