@@ -822,16 +822,16 @@ section {
   background:
     linear-gradient(
       100deg,
-      rgba(243, 242, 239, 0.96) 0%,
-      rgba(243, 242, 239, 0.74) 52%,
-      rgba(238, 232, 222, 0.94) 100%
+      rgba(245, 244, 242, 0.88) 0%,
+      rgba(245, 244, 242, 0.68) 52%,
+      rgba(242, 238, 232, 0.84) 100%
     ),
     radial-gradient(
       ellipse at 72% 28%,
-      rgba(249, 115, 22, 0.26),
+      rgba(249, 115, 22, 0.12),
       transparent 30rem
     ),
-    #f3f2ef;
+    #faf9f7;
   color: #101010;
   overflow: hidden;
   isolation: isolate;
@@ -990,13 +990,13 @@ section {
   gap: 16px;
   margin-top: 22px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.72);
   padding: 12px 16px;
-  color: rgba(16, 16, 16, 0.62);
+  color: rgba(16, 16, 16, 0.56);
   font-family: var(--mono);
   font-size: 10px;
   text-transform: uppercase;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.08);
 }
 
 .reveal {
