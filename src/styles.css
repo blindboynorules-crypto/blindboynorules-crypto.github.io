@@ -83,6 +83,10 @@ button {
   line-height: 0.78;
   text-transform: uppercase;
   pointer-events: auto;
+  transition: transform 160ms var(--ease-out);
+}
+.brand:active {
+  transform: scale(0.97);
 }
 .brand span {
   color: var(--orange);
@@ -109,8 +113,8 @@ button {
   line-height: 1;
   text-transform: uppercase;
   transition:
-    color 180ms ease,
-    background-color 180ms ease,
+    color 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
     transform 160ms var(--ease-out),
     box-shadow 180ms var(--ease-out);
 }
@@ -330,8 +334,8 @@ button {
   text-transform: uppercase;
   transition:
     transform 160ms var(--ease-out),
-    color 180ms ease,
-    background-color 180ms ease,
+    color 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
     box-shadow 180ms var(--ease-out);
 }
 .btn-primary {
@@ -467,6 +471,11 @@ button {
   place-items: center;
   font-style: normal;
   color: var(--orange);
+  animation: scrollHintBounce 2.4s var(--ease-in-out) infinite;
+}
+@keyframes scrollHintBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
 }
 
 main {
@@ -541,6 +550,10 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition:
+    transform 200ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    background 180ms var(--ease-out);
 }
 .stat-card strong {
   font-family: var(--display);
@@ -718,6 +731,9 @@ section {
   box-shadow:
     0 44px 120px rgba(0, 0, 0, 0.68),
     0 0 0 1px rgba(0, 0, 0, 0.55);
+  transition:
+    border-color 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
 }
 .reel-frame::before {
   content: "";
@@ -777,9 +793,9 @@ section {
   transform: none;
   opacity: 1;
   transition:
-    transform 0.62s var(--ease-out),
-    opacity 0.62s var(--ease-out),
-    border-color 180ms ease;
+    transform 340ms var(--ease-out),
+    opacity 340ms var(--ease-out),
+    border-color 180ms var(--ease-out);
 }
 .service-card.revealed {
   transform: translateY(0);
@@ -961,8 +977,8 @@ section {
   border-bottom: 1px solid rgba(16, 16, 16, 0.24);
   padding-bottom: 5px;
   transition:
-    color 180ms ease,
-    border-color 180ms ease,
+    color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out),
     transform 160ms var(--ease-out);
 }
 .contact-links a:focus-visible {
@@ -997,14 +1013,17 @@ section {
   font-size: 10px;
   text-transform: uppercase;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.08);
+  transition:
+    background 200ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
 }
 
 .reveal {
   transform: none;
   opacity: 1;
   transition:
-    transform 0.62s var(--ease-out),
-    opacity 0.62s var(--ease-out);
+    transform 340ms var(--ease-out),
+    opacity 340ms var(--ease-out);
 }
 body.motion-ready .reveal:not(.revealed),
 body.motion-ready .service-card:not(.revealed) {
@@ -1039,6 +1058,25 @@ body.motion-ready .service-card:not(.revealed) {
   }
   .service-card:hover {
     border-color: rgba(249, 115, 22, 0.45);
+  }
+  .stat-card:hover {
+    border-color: rgba(249, 115, 22, 0.32);
+    transform: translateY(-2px);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.085),
+      rgba(255, 255, 255, 0.035)
+    );
+  }
+  .reel-frame:hover {
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow:
+      0 50px 130px rgba(0, 0, 0, 0.72),
+      0 0 0 1px rgba(249, 115, 22, 0.22);
+  }
+  .footer-bar:hover {
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.16);
   }
   .contact-links a:hover {
     color: var(--orange);
@@ -1124,11 +1162,17 @@ body.motion-ready .service-card:not(.revealed) {
   ((hover: none) and (pointer: coarse) and (max-width: 920px)) {
   .site-nav {
     height: 64px;
-    grid-template-columns: 1fr auto;
-    padding: 0 16px;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding: 0 12px;
   }
   .nav-pill {
-    display: none;
+    gap: 10px;
+    padding: 7px 11px;
+  }
+  .nav-pill a {
+    font-size: 10px;
+    letter-spacing: 0.04em;
   }
   .contact-pill {
     width: 52px;
