@@ -14,6 +14,8 @@
   --mono: "Spline Sans Mono", "Courier New", monospace;
   --sans: "Inter", system-ui, sans-serif;
   --ease: cubic-bezier(0.11, 0.82, 0.39, 0.92);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777368912/thai_video_kk1j87.jpg");
 }
 
@@ -99,28 +101,25 @@ button {
 }
 .nav-pill a,
 .contact-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--mono);
   font-size: 11px;
   line-height: 1;
   text-transform: uppercase;
   transition:
-    color 0.35s var(--ease),
-    background 0.35s var(--ease),
-    transform 0.35s var(--ease),
-    box-shadow 0.35s var(--ease);
-}
-.nav-pill a:hover {
-  color: var(--orange);
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 160ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
 }
 .contact-pill {
   justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 56px;
   height: 56px;
   border-radius: 999px;
-  background: #fff;
+  background-color: #fff;
   color: #090909;
   border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
@@ -128,11 +127,7 @@ button {
   mix-blend-mode: normal;
   font-weight: 700;
 }
-.contact-pill:hover {
-  background: var(--orange);
-  color: #fff;
-  transform: translateY(-1px);
-}
+.nav-pill a:focus-visible,
 .contact-pill:focus-visible {
   outline: 2px solid var(--orange);
   outline-offset: 4px;
@@ -142,10 +137,7 @@ button {
   height: 25px;
   display: block;
   transform: translateX(-1px) rotate(-8deg);
-  transition: transform 0.35s var(--ease);
-}
-.contact-pill:hover svg {
-  transform: translate(2px, -2px) rotate(-8deg);
+  transition: transform 160ms var(--ease-out);
 }
 
 .hero-scroll {
@@ -329,28 +321,26 @@ button {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   transition:
-    transform 0.35s var(--ease),
-    color 0.35s var(--ease),
-    background 0.35s var(--ease);
+    transform 160ms var(--ease-out),
+    color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms var(--ease-out);
 }
 .btn-primary {
   min-height: 43px;
   border-radius: 999px;
-  background: var(--orange);
+  background-color: var(--orange);
   color: #fff;
   padding: 0 19px;
   box-shadow: 0 18px 44px rgba(249, 115, 22, 0.28);
 }
-.btn-primary:hover {
-  background: var(--orange2);
-  transform: translateY(-2px);
-}
 .btn-text {
   color: rgba(255, 255, 255, 0.78);
 }
-.btn-text:hover {
-  color: var(--orange);
-  transform: translateX(3px);
+.btn-primary:focus-visible,
+.btn-text:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 5px;
 }
 
 .cue-stack {
@@ -365,8 +355,8 @@ button {
   opacity: 0;
   transform: translateY(22px);
   transition:
-    opacity 0.55s var(--ease),
-    transform 0.55s var(--ease);
+    opacity 0.42s var(--ease-out),
+    transform 0.42s var(--ease-out);
 }
 .cue.active {
   opacity: 1;
@@ -735,16 +725,13 @@ section {
   transform: none;
   opacity: 1;
   transition:
-    transform 0.8s var(--ease),
-    opacity 0.8s var(--ease),
-    border-color 0.35s var(--ease);
+    transform 0.62s var(--ease-out),
+    opacity 0.62s var(--ease-out),
+    border-color 180ms ease;
 }
 .service-card.revealed {
   transform: translateY(0);
   opacity: 1;
-}
-.service-card:hover {
-  border-color: rgba(249, 115, 22, 0.45);
 }
 .service-card span {
   color: var(--orange);
@@ -855,18 +842,18 @@ section {
   text-transform: uppercase;
 }
 .contact-links a {
+  display: inline-flex;
   width: max-content;
   border-bottom: 1px solid rgba(16, 16, 16, 0.24);
   padding-bottom: 5px;
   transition:
-    color 0.35s var(--ease),
-    border-color 0.35s var(--ease),
-    transform 0.35s var(--ease);
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 160ms var(--ease-out);
 }
-.contact-links a:hover {
-  color: var(--orange);
-  border-color: var(--orange);
-  transform: translateX(4px);
+.contact-links a:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 5px;
 }
 .footer-block {
   position: relative;
@@ -902,12 +889,12 @@ section {
   transform: none;
   opacity: 1;
   transition:
-    transform 0.8s var(--ease),
-    opacity 0.8s var(--ease);
+    transform 0.62s var(--ease-out),
+    opacity 0.62s var(--ease-out);
 }
 body.motion-ready .reveal:not(.revealed),
 body.motion-ready .service-card:not(.revealed) {
-  transform: translateY(42px);
+  transform: translateY(32px);
   opacity: 0;
 }
 .reveal.revealed {
@@ -915,10 +902,56 @@ body.motion-ready .service-card:not(.revealed) {
   opacity: 1;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .nav-pill a:hover {
+    color: var(--orange);
+  }
+  .contact-pill:hover {
+    background-color: var(--orange);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .contact-pill:hover svg {
+    transform: translate(2px, -2px) rotate(-8deg);
+  }
+  .btn-primary:hover {
+    background-color: var(--orange2);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 48px rgba(249, 115, 22, 0.34);
+  }
+  .btn-text:hover {
+    color: var(--orange);
+    transform: translateX(3px);
+  }
+  .service-card:hover {
+    border-color: rgba(249, 115, 22, 0.45);
+  }
+  .contact-links a:hover {
+    color: var(--orange);
+    border-color: var(--orange);
+    transform: translateX(4px);
+  }
+}
+
+.nav-pill a:active,
+.contact-pill:active {
+  transform: scale(0.97);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-text:active {
+  transform: translateX(1px) scale(0.97);
+}
+.contact-links a:active {
+  transform: translateX(2px) scale(0.98);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
-    transition: none !important;
     animation: none !important;
   }
   .hero-scroll {
@@ -940,6 +973,19 @@ body.motion-ready .service-card:not(.revealed) {
   .service-card {
     opacity: 1 !important;
     transform: none !important;
+  }
+  .contact-pill:hover,
+  .contact-pill:active,
+  .btn-primary:hover,
+  .btn-primary:active,
+  .btn-text:hover,
+  .btn-text:active,
+  .contact-links a:hover,
+  .contact-links a:active {
+    transform: none;
+  }
+  .contact-pill:hover svg {
+    transform: translateX(-1px) rotate(-8deg);
   }
 }
 
