@@ -11,14 +11,9 @@ const cues = [...document.querySelectorAll(".cue")];
 const progressCard = document.getElementById("progressCard");
 const progressLabel = document.getElementById("progressLabel");
 const revealItems = [...document.querySelectorAll(".reveal, .service-card")];
-const TAIL_SECONDS = 4;
-const TAIL_PLAYBACK_RATE = 0.65;
 const SEEK_TOLERANCE = 0.05;
-const MAX_CATCHUP_RATE = 12;
 let videoDuration = 0;
 let targetTime = 0;
-let videoMode = "hero";
-let videoRaf = null;
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -33,18 +28,9 @@ function heroProgress() {
 function paintHero() {
   const p = heroProgress();
   const duration = videoDuration || video.duration || 0;
-  const rect = hero.getBoundingClientRect();
-  const pastHero = rect.bottom <= window.innerHeight;
 
   if (!prefersReduced && Number.isFinite(duration) && duration > 0) {
-    if (pastHero) {
-      videoMode = "tail";
-    } else {
-      videoMode = "hero";
-      targetTime =
-        p *
-        Math.max(0, duration - Math.min(TAIL_SECONDS, duration * 0.24) - 0.1);
-    }
+    targetTime = p * Math.max(0, duration - 0.12);
   }
 
   const cueIndex = Math.min(cues.length - 1, Math.floor(p * cues.length));
@@ -57,53 +43,19 @@ function paintHero() {
 }
 
 function syncVideoToScroll() {
-  if (!prefersReduced && video.readyState >= 2 && videoDuration > 0) {
-    if (videoMode === "tail") {
-      const tailStart = Math.max(0, videoDuration - TAIL_SECONDS);
-      const nearEnd = video.currentTime >= videoDuration - 0.08;
-      const beforeTail = video.currentTime < tailStart - 0.08;
-      if (nearEnd || beforeTail) {
-        try {
-          if (typeof video.fastSeek === "function") video.fastSeek(tailStart);
-          else video.currentTime = tailStart;
-        } catch (e) {}
-      }
-      try {
-        if (Math.abs(video.playbackRate - TAIL_PLAYBACK_RATE) > 0.02) {
-          video.playbackRate = TAIL_PLAYBACK_RATE;
-        }
-        if (video.paused) video.play().catch(() => {});
-      } catch (e) {}
-    } else {
-      const current = video.currentTime;
-      const diff = targetTime - current;
+  if (!prefersReduced && video.readyState >= 1 && videoDuration > 0) {
+    const current = video.currentTime || 0;
+    const safeTarget = clamp(targetTime, 0, Math.max(0, videoDuration - 0.05));
+    const seekTolerance = coarsePointer ? 0.12 : SEEK_TOLERANCE;
 
-      const seekTolerance = coarsePointer ? 0.09 : SEEK_TOLERANCE;
-      if (Math.abs(diff) < seekTolerance) {
-        if (!video.paused) {
-          try {
-            video.pause();
-          } catch (e) {}
-        }
-      } else if (diff > 0) {
-        const rate = clamp(diff * 6, 1, coarsePointer ? 7 : MAX_CATCHUP_RATE);
-        try {
-          if (Math.abs(video.playbackRate - rate) > 0.05)
-            video.playbackRate = rate;
-          if (video.paused) video.play().catch(() => {});
-        } catch (e) {}
-      } else {
-        try {
-          if (!video.paused) video.pause();
-          const safeTarget = Math.max(0, targetTime);
-          if (typeof video.fastSeek === "function") video.fastSeek(safeTarget);
-          else video.currentTime = safeTarget;
-        } catch (e) {}
+    try {
+      if (!video.paused) video.pause();
+      video.playbackRate = 1;
+      if (Math.abs(safeTarget - current) > seekTolerance) {
+        video.currentTime = safeTarget;
       }
-    }
+    } catch (e) {}
   }
-
-  videoRaf = requestAnimationFrame(syncVideoToScroll);
 }
 
 let raf = null;
@@ -112,6 +64,7 @@ function requestPaint() {
   raf = requestAnimationFrame(() => {
     raf = null;
     paintHero();
+    syncVideoToScroll();
   });
 }
 
@@ -127,7 +80,7 @@ video.addEventListener(
       video.currentTime = 0;
     } catch (e) {}
     paintHero();
-    if (!videoRaf) videoRaf = requestAnimationFrame(syncVideoToScroll);
+    syncVideoToScroll();
   },
   { once: true },
 );
@@ -136,6 +89,7 @@ video.addEventListener(
   () => {
     video.pause();
     paintHero();
+    syncVideoToScroll();
   },
   { once: true },
 );
