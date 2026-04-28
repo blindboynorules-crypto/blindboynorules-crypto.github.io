@@ -9,6 +9,8 @@
   --orange: #f97316;
   --orange2: #ea580c;
   --display: "Sofia Sans Condensed", "Inter", system-ui, sans-serif;
+  --editorial: "Cormorant Garamond", Georgia, serif;
+  --script: "Burgues Script", "Imperial Script", "Pinyon Script", cursive;
   --mono: "Spline Sans Mono", "Courier New", monospace;
   --sans: "Inter", system-ui, sans-serif;
   --ease: cubic-bezier(0.11, 0.82, 0.39, 0.92);
@@ -559,18 +561,107 @@ section {
 }
 
 .reel-section {
+  position: relative;
+  overflow: hidden;
   padding-top: clamp(82px, 11vw, 142px);
   padding-bottom: clamp(88px, 12vw, 164px);
-  background: linear-gradient(180deg, #0a0a0a, #111 45%, #080808);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 48%,
+      rgba(112, 12, 8, 0.34) 48% 73%,
+      transparent 73%
+    ),
+    linear-gradient(180deg, #0a0a0a, #111 45%, #080808);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
+.reel-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, rgba(244, 241, 236, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(244, 241, 236, 0.035) 1px, transparent 1px);
+  background-size:
+    120px 100%,
+    100% 86px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.reel-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(6, 6, 6, 0.78),
+    transparent 42%,
+    rgba(6, 6, 6, 0.62)
+  );
+  pointer-events: none;
+}
 .reel-head {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 390px);
   gap: clamp(24px, 5vw, 70px);
-  align-items: end;
+  align-items: center;
   margin-bottom: clamp(34px, 5vw, 64px);
+}
+.reel-title-editorial {
+  position: relative;
+  display: grid;
+  max-width: min(920px, 100%);
+  min-height: clamp(142px, 20vw, 236px);
+  place-items: center start;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 0.86;
+}
+.reel-title-editorial::before {
+  content: "";
+  position: absolute;
+  inset: 16% -4% 8% 34%;
+  z-index: -1;
+  border-left: 1px solid rgba(244, 241, 236, 0.18);
+  background:
+    linear-gradient(90deg, rgba(124, 13, 10, 0.72), rgba(249, 115, 22, 0.2)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 68%);
+  opacity: 0.72;
+}
+.reel-title-serif {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-left: clamp(64px, 13vw, 176px);
+  font-family: var(--editorial);
+  font-size: clamp(30px, 4.9vw, 76px);
+  font-weight: 600;
+  letter-spacing: 0.055em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: rgba(244, 241, 236, 0.78);
+  text-shadow: 0 20px 50px rgba(0, 0, 0, 0.44);
+}
+.reel-title-script {
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin-top: clamp(-18px, -1.5vw, -8px);
+  font-family: var(--script);
+  font-size: clamp(82px, 13vw, 184px);
+  font-weight: 400;
+  line-height: 0.72;
+  color: rgba(244, 241, 236, 0.9);
+  text-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.55),
+    0 0 34px rgba(249, 115, 22, 0.08);
+  white-space: nowrap;
 }
 .reel-note {
   color: var(--muted);
@@ -581,6 +672,8 @@ section {
   text-transform: uppercase;
 }
 .reel-frame {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
@@ -601,6 +694,8 @@ section {
   filter: contrast(1.04) saturate(0.98);
 }
 .caption-row {
+  position: relative;
+  z-index: 1;
   max-width: 1180px;
   margin: 18px auto 0;
   display: flex;
@@ -946,6 +1041,25 @@ body.motion-ready .service-card:not(.revealed) {
   }
   .section-title {
     font-size: clamp(54px, 17vw, 92px);
+  }
+  .reel-title-editorial {
+    min-height: 156px;
+    place-items: center;
+    text-align: center;
+  }
+  .reel-title-editorial::before {
+    inset: 18% 3% 10% 24%;
+  }
+  .reel-title-serif {
+    margin-left: 0;
+    font-size: clamp(25px, 8vw, 40px);
+    letter-spacing: 0.05em;
+  }
+  .reel-title-script {
+    margin-top: -4px;
+    font-size: clamp(58px, 16vw, 78px);
+    line-height: 0.78;
+    transform: translateX(-2px);
   }
   .caption-row,
   .footer-bar {
