@@ -584,6 +584,7 @@
     }
 
     .contact-section {
+      position: relative;
       min-height: 100svh;
       padding-top: clamp(84px, 12vw, 150px);
       padding-bottom: 34px;
@@ -594,8 +595,27 @@
         radial-gradient(circle at 82% 22%, rgba(249,115,22,.2), transparent 24rem),
         #f3f2ef;
       color: #101010;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .contact-dotted-surface {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .72;
+      mix-blend-mode: multiply;
+      mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 88%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 88%, transparent 100%);
+    }
+    .contact-dotted-surface canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
     }
     .contact-shell {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
       gap: clamp(30px, 6vw, 92px);
@@ -641,6 +661,8 @@
       transform: translateX(4px);
     }
     .footer-block {
+      position: relative;
+      z-index: 1;
       margin-top: clamp(76px, 10vw, 126px);
     }
     .footer-logo {
@@ -926,6 +948,7 @@
     </section>
 
     <section class="contact-section" id="contact">
+      <div class="contact-dotted-surface" id="contactDottedSurface" aria-hidden="true"></div>
       <div class="contact-shell">
         <h2 class="contact-title reveal">Let's make something <em>sharp.</em></h2>
         <div>
@@ -963,6 +986,7 @@
     </defs>
   </svg>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
@@ -1193,6 +1217,123 @@
 
       if (coarsePointer) startTouchAutoMorph();
       paintMorph(0);
+    })();
+
+    (function () {
+      const container = document.getElementById('contactDottedSurface');
+      if (!container || prefersReduced || typeof THREE === 'undefined') return;
+
+      const amountX = coarsePointer ? 22 : 34;
+      const amountY = coarsePointer ? 28 : 46;
+      const separation = coarsePointer ? 138 : 128;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, 1, 1, 10000);
+      camera.position.set(0, 390, 1180);
+
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: !coarsePointer,
+        powerPreference: 'low-power'
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarsePointer ? 1.2 : 1.6));
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
+
+      const positions = [];
+      const colors = [];
+      const geometry = new THREE.BufferGeometry();
+
+      for (let ix = 0; ix < amountX; ix++) {
+        for (let iy = 0; iy < amountY; iy++) {
+          positions.push(
+            ix * separation - (amountX * separation) / 2,
+            0,
+            iy * separation - (amountY * separation) / 2
+          );
+
+          const warmPoint = (ix + iy) % 7 === 0;
+          if (warmPoint) colors.push(.98, .45, .1);
+          else colors.push(.12, .105, .09);
+        }
+      }
+
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: coarsePointer ? 5.5 : 6.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: coarsePointer ? .22 : .3,
+        sizeAttenuation: true
+      });
+
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      let frame = null;
+      let count = 0;
+      let running = false;
+
+      function resizeDottedSurface() {
+        const rect = container.getBoundingClientRect();
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height, false);
+      }
+
+      function animateDottedSurface() {
+        if (!running) return;
+        frame = requestAnimationFrame(animateDottedSurface);
+
+        const positionAttribute = geometry.attributes.position;
+        const particlePositions = positionAttribute.array;
+        let i = 0;
+
+        for (let ix = 0; ix < amountX; ix++) {
+          for (let iy = 0; iy < amountY; iy++) {
+            const index = i * 3;
+            particlePositions[index + 1] =
+              Math.sin((ix + count) * .28) * 42 +
+              Math.sin((iy + count) * .44) * 42;
+            i++;
+          }
+        }
+
+        points.rotation.y = Math.sin(count * .025) * .04;
+        positionAttribute.needsUpdate = true;
+        renderer.render(scene, camera);
+        count += coarsePointer ? .045 : .075;
+      }
+
+      function startDottedSurface() {
+        if (running) return;
+        running = true;
+        resizeDottedSurface();
+        animateDottedSurface();
+      }
+
+      function stopDottedSurface() {
+        running = false;
+        if (frame) {
+          cancelAnimationFrame(frame);
+          frame = null;
+        }
+      }
+
+      window.addEventListener('resize', resizeDottedSurface, { passive: true });
+      resizeDottedSurface();
+
+      const dottedObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) startDottedSurface();
+          else stopDottedSurface();
+        });
+      }, { threshold: .08 });
+
+      dottedObserver.observe(container);
     })();
   </script>
 </body>
