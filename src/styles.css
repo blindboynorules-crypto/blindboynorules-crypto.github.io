@@ -16,7 +16,7 @@
   --ease: cubic-bezier(0.11, 0.82, 0.39, 0.92);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777368912/thai_video_kk1j87.jpg");
+  --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777395975/thai_video_prob4_thl0ci.jpg");
 }
 
 * {
@@ -1141,16 +1141,18 @@ body.motion-ready .service-card:not(.revealed) {
   .hero-sticky {
     position: relative;
     height: auto;
-    min-height: 810px;
+    min-height: 920px;
     background:
       linear-gradient(
-        90deg,
-        rgba(6, 6, 6, 0.86),
-        rgba(6, 6, 6, 0.54) 52%,
-        rgba(6, 6, 6, 0.82)
+        180deg,
+        rgba(6, 6, 6, 0.18) 0%,
+        rgba(6, 6, 6, 0.08) 22%,
+        rgba(6, 6, 6, 0.32) 38%,
+        rgba(6, 6, 6, 0.78) 56%,
+        rgba(6, 6, 6, 0.96) 78%,
+        rgba(6, 6, 6, 1) 100%
       ),
-      linear-gradient(180deg, rgba(6, 6, 6, 0.14), rgba(6, 6, 6, 0.9)),
-      var(--mobile-hero-image) center / cover no-repeat;
+      var(--mobile-hero-image) center 18% / cover no-repeat;
   }
   .hero-video {
     display: none;
@@ -1158,9 +1160,9 @@ body.motion-ready .service-card:not(.revealed) {
   .hero-content {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    min-height: 810px;
-    padding: 88px 16px 30px;
+    justify-content: flex-end;
+    min-height: 920px;
+    padding: 320px 16px 30px;
   }
   .hero-left {
     align-self: stretch;
