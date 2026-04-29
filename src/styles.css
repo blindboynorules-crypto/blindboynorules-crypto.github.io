@@ -835,38 +835,13 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background:
-    linear-gradient(
-      100deg,
-      rgba(245, 244, 242, 0.88) 0%,
-      rgba(245, 244, 242, 0.68) 52%,
-      rgba(242, 238, 232, 0.84) 100%
-    ),
-    radial-gradient(
-      ellipse at 72% 28%,
-      rgba(249, 115, 22, 0.12),
-      transparent 30rem
-    ),
-    #faf9f7;
+  background: #f5f4f2;
   color: #101010;
   overflow: hidden;
   isolation: isolate;
 }
 .contact-section::before {
-  content: "";
-  position: absolute;
-  inset: 9% -18% auto 22%;
-  z-index: 0;
-  height: 56%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 255, 255, 0.78),
-    rgba(249, 115, 22, 0.16) 36%,
-    rgba(16, 16, 16, 0.08) 58%,
-    transparent 74%
-  );
-  filter: blur(30px);
-  pointer-events: none;
+  display: none;
 }
 .contact-dotted-surface {
   position: absolute;
