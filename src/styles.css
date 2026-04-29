@@ -16,7 +16,7 @@
   --ease: cubic-bezier(0.11, 0.82, 0.39, 0.92);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/video/upload/so_0.5,f_jpg,q_auto,w_1400/v1777395975/thai_video_prob4_thl0ci.jpg");
+  --mobile-hero-image: url("https://res.cloudinary.com/dgiqdfycy/image/upload/q_auto,f_auto,w_1400/v1777289695/thai_mbsntw.jpg");
 }
 
 * {
@@ -1000,6 +1000,41 @@ section {
   line-height: 0.72;
   text-transform: uppercase;
 }
+.footer-logo-reveal {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: clamp(50px, 9.4vw, 127px);
+  cursor: default;
+  outline: none;
+}
+.footer-logo-reveal:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+.footer-logo-stack {
+  display: block;
+  transition: transform 480ms var(--ease-in-out);
+  will-change: transform;
+}
+.footer-logo-cell {
+  display: flex;
+  align-items: center;
+  height: clamp(50px, 9.4vw, 127px);
+  white-space: nowrap;
+  line-height: 1;
+}
+.footer-logo-cell--alt {
+  font-size: clamp(28px, 5.4vw, 64px);
+  letter-spacing: -0.025em;
+  color: var(--orange);
+  text-shadow: none;
+}
+.footer-logo-reveal:hover .footer-logo-stack,
+.footer-logo-reveal:focus-visible .footer-logo-stack {
+  transform: translateY(-50%);
+}
 .footer-bar {
   display: flex;
   justify-content: space-between;
@@ -1202,7 +1237,7 @@ body.motion-ready .service-card:not(.revealed) {
         #060606 78%,
         #060606 100%
       ),
-      var(--mobile-hero-image) center 12% / cover no-repeat;
+      var(--mobile-hero-image) center 25% / cover no-repeat;
   }
   .hero-sticky::after {
     display: none;
