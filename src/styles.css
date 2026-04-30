@@ -967,7 +967,6 @@ section {
 }
 .footer-logo {
   color: #fff;
-  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   font-family: var(--display);
   font-size: clamp(68px, 13vw, 176px);
   font-weight: 900;
@@ -999,16 +998,34 @@ section {
   height: clamp(50px, 9.4vw, 127px);
   white-space: nowrap;
   line-height: 1;
+  text-shadow:
+    0 1px 2px rgba(16, 16, 16, 0.08),
+    0 10px 22px rgba(16, 16, 16, 0.12);
+  transition: text-shadow 220ms var(--ease-out);
 }
 .footer-logo-cell--alt {
   font-size: clamp(28px, 5.4vw, 64px);
   letter-spacing: -0.025em;
   color: var(--orange);
-  text-shadow: none;
+  text-shadow:
+    0 1px 2px rgba(16, 16, 16, 0.1),
+    0 9px 20px rgba(249, 115, 22, 0.14);
 }
 .footer-logo-reveal:hover .footer-logo-stack,
 .footer-logo-reveal:focus-visible .footer-logo-stack {
   transform: translateY(-50%);
+}
+.footer-logo-reveal:hover .footer-logo-cell,
+.footer-logo-reveal:focus-visible .footer-logo-cell {
+  text-shadow:
+    0 1px 2px rgba(16, 16, 16, 0.06),
+    0 7px 16px rgba(16, 16, 16, 0.1);
+}
+.footer-logo-reveal:hover .footer-logo-cell--alt,
+.footer-logo-reveal:focus-visible .footer-logo-cell--alt {
+  text-shadow:
+    0 1px 2px rgba(16, 16, 16, 0.08),
+    0 8px 18px rgba(249, 115, 22, 0.16);
 }
 .footer-bar {
   display: flex;
@@ -1264,10 +1281,12 @@ body.motion-ready .service-card:not(.revealed) {
   }
   .hero-title {
     margin-top: 16px;
-    height: clamp(170px, 56vw, 240px);
+    width: min(900px, 100%);
+    max-width: 900px;
+    height: clamp(150px, 33.333vw, 300px);
   }
   .liquid-title-line {
-    font-size: clamp(82px, 26vw, 124px);
+    font-size: clamp(82px, 11.85vw, 154px);
     letter-spacing: -0.052em;
     line-height: 0.77;
   }
@@ -1355,3 +1374,4 @@ body.motion-ready .service-card:not(.revealed) {
     max-width: 100%;
   }
 }
+
