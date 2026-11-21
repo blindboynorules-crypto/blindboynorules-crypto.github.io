@@ -191,7 +191,7 @@ function frameUrl(i) {
 }
 
 function sizeFrameCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const w = Math.round(frameCanvas.clientWidth * dpr);
   const h = Math.round(frameCanvas.clientHeight * dpr);
   if (w && h && (frameCanvas.width !== w || frameCanvas.height !== h)) {
@@ -220,6 +220,8 @@ function drawHeroFrame() {
   if (key === lastDrawnFrame) return;
   lastDrawnFrame = key;
   const ctx = frameCanvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   const cw = frameCanvas.width;
   const ch = frameCanvas.height;
   const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
