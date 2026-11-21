@@ -178,6 +178,95 @@ if (shouldScrubHeroVideo) {
 } else if (video) {
   unloadHeroVideoForMobile();
 }
+/* Mobile: phones cannot scrub an mp4 smoothly, so draw a pre-cut frame sequence on a canvas. */
+const frameCanvas = document.getElementById("heroFrames");
+const FRAME_COUNT = 121;
+const frameImages = new Array(FRAME_COUNT);
+let lastDrawnFrame = -1;
+const useHeroFrames =
+  Boolean(frameCanvas) && mobileHeroQuery.matches && !prefersReduced;
+
+function frameUrl(i) {
+  return `${import.meta.env.BASE_URL}hero-frames/f${String(i + 1).padStart(3, "0")}.webp`;
+}
+
+function sizeFrameCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.round(frameCanvas.clientWidth * dpr);
+  const h = Math.round(frameCanvas.clientHeight * dpr);
+  if (w && h && (frameCanvas.width !== w || frameCanvas.height !== h)) {
+    frameCanvas.width = w;
+    frameCanvas.height = h;
+    lastDrawnFrame = -1;
+  }
+}
+
+function nearestLoaded(index) {
+  for (let d = 0; d < FRAME_COUNT; d++) {
+    const a = frameImages[index - d];
+    if (a && a.complete && a.naturalWidth) return a;
+    const b = frameImages[index + d];
+    if (b && b.complete && b.naturalWidth) return b;
+  }
+  return null;
+}
+
+function drawHeroFrame() {
+  if (!useHeroFrames) return;
+  const index = Math.round(heroProgress() * (FRAME_COUNT - 1));
+  const img = nearestLoaded(index);
+  if (!img) return;
+  const key = frameImages.indexOf(img);
+  if (key === lastDrawnFrame) return;
+  lastDrawnFrame = key;
+  const ctx = frameCanvas.getContext("2d");
+  const cw = frameCanvas.width;
+  const ch = frameCanvas.height;
+  const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+  const dw = img.naturalWidth * scale;
+  const dh = img.naturalHeight * scale;
+  ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+}
+
+function loadFrame(i) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = img.onerror = () => {
+      resolve();
+      drawHeroFrame();
+    };
+    img.src = frameUrl(i);
+    frameImages[i] = img;
+  });
+}
+
+async function loadHeroFrames() {
+  await loadFrame(0);
+  hero.classList.add("has-hero-frames");
+  sizeFrameCanvas();
+  drawHeroFrame();
+  // coarse pass first so any scroll position has a nearby frame, then fill in
+  const order = [];
+  for (let step of [16, 8, 4, 2, 1]) {
+    for (let i = 0; i < FRAME_COUNT; i += step) {
+      if (!frameImages[i] && !order.includes(i)) order.push(i);
+    }
+  }
+  for (let k = 0; k < order.length; k += 6) {
+    await Promise.all(order.slice(k, k + 6).map(loadFrame));
+  }
+}
+
+if (useHeroFrames) {
+  window.addEventListener("scroll", () => requestAnimationFrame(drawHeroFrame), { passive: true });
+  window.addEventListener("resize", () => {
+    sizeFrameCanvas();
+    drawHeroFrame();
+  }, { passive: true });
+  loadHeroFrames();
+}
+
 window.addEventListener("scroll", requestPaint, { passive: true });
 window.addEventListener("resize", requestPaint, { passive: true });
 paintHero();
