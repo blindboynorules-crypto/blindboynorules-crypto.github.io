@@ -1381,8 +1381,14 @@ body.motion-ready .service-card:not(.revealed) {
 
 /* Mobile: scroll-scrubbed frame sequence pinned behind the hero copy */
 @media (max-width: 700px), (hover: none) and (pointer: coarse) and (max-width: 920px) {
-  .hero-scroll.has-hero-frames {
-    padding-bottom: 150svh;
+  /* spacer inside the content box so the sticky frame layer stays pinned through it */
+  .hero-scroll.has-hero-frames::after {
+    content: "";
+    display: block;
+    position: relative;
+    z-index: 1;
+    height: 130svh;
+    background: linear-gradient(180deg, transparent 0%, transparent 82%, #060606 100%);
   }
   .hero-scroll.has-hero-frames .hero-frames-wrap {
     display: block;
