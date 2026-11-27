@@ -344,6 +344,7 @@ setTimeout(() => {
 
   const titleStates = [
     { top: "VIDEO", bottom: "EDITOR." },
+    { top: "VISUAL AI", bottom: "DIRECTOR." },
     { top: "THAI", bottom: "NGUYEN." },
   ];
   const morphTime = 1.5;
