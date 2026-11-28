@@ -973,12 +973,12 @@ section {
 }
 .footer-logo {
   color: #101010;
-  font-family: var(--display);
-  font-size: clamp(68px, 13vw, 176px);
-  font-weight: 900;
-  letter-spacing: -0.075em;
-  line-height: 0.82;
-  text-transform: uppercase;
+  /* signature script: a sign-off that contrasts with the condensed contact headline */
+  font-family: var(--script);
+  font-size: clamp(96px, 15vw, 210px);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
 }
 /* Wordmark that rolls letter by letter into LET'S COLLAB. Soft layered drop shadow
    so the ink letters sit on the paper background like a printed, raised mark. */
@@ -990,11 +990,11 @@ section {
     0 32px 56px rgba(16, 16, 16, 0.12);
   position: relative;
   display: inline-grid;
-  padding-top: 0.06em;
+  padding-top: 0.12em;
   cursor: pointer;
   outline: none;
   /* clip the top so letters roll out of sight, leave room below for the shadow */
-  clip-path: inset(0 -0.4em -0.9em -0.4em);
+  clip-path: inset(0 -0.4em -0.6em -0.4em);
 }
 .footer-logo-reveal:focus-visible {
   outline: 2px solid var(--orange);
@@ -1011,8 +1011,8 @@ section {
   text-shadow: var(--logo-shadow);
 }
 .footer-logo-cell--alt {
-  font-size: 0.62em;
-  letter-spacing: -0.045em;
+  font-size: 0.82em;
+  letter-spacing: 0;
   color: var(--orange);
   text-shadow:
     0 1px 1px rgba(16, 16, 16, 0.08),
