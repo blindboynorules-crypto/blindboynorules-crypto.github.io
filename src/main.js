@@ -284,6 +284,11 @@ function isInViewport(item) {
 
 function revealItem(item) {
   item.classList.add("revealed");
+  // the stagger delay is only for the entrance; drop it so hover feedback stays instant
+  const delay = parseFloat(item.style.transitionDelay) || 0;
+  window.setTimeout(() => {
+    item.style.transitionDelay = "";
+  }, delay + 400);
 }
 
 const io = new IntersectionObserver(
@@ -347,8 +352,9 @@ setTimeout(() => {
     { top: "VISUAL AI", bottom: "DIRECTOR." },
     { top: "THAI", bottom: "NGUYEN." },
   ];
-  const morphTime = 1.5;
-  const cooldownTime = 0.5;
+  const morphTime = 1.2; // seconds spent morphing between two titles
+  const cooldownTime = 2.5; // seconds each title holds fully readable
+  const MAX_BLUR = 20; // px; the threshold filter hides anything blurrier anyway
   let textIndex = 0;
   let morph = 0;
   let cooldown = cooldownTime;
@@ -376,11 +382,11 @@ setTimeout(() => {
     setLayerText(layerB, next);
 
     const inverted = 1 - f;
-    setLayerState(layerB, Math.pow(f, 0.4), Math.min(8 / f - 8, 100));
+    setLayerState(layerB, Math.pow(f, 0.4), Math.min(8 / f - 8, MAX_BLUR));
     setLayerState(
       layerA,
       Math.pow(inverted, 0.4),
-      Math.min(8 / inverted - 8, 100),
+      Math.min(8 / inverted - 8, MAX_BLUR),
     );
   }
 
@@ -425,10 +431,31 @@ setTimeout(() => {
   setLayerText(layerA, titleStates[0]);
   setLayerText(layerB, titleStates[1]);
   setLayerState(layerA, 1, 0);
-  setLayerState(layerB, 0, 100);
+  setLayerState(layerB, 0, MAX_BLUR);
+
+  // run the morph loop only while the title is on screen and the tab is visible
+  let titleVisible = true;
+  function startMorph() {
+    if (rafId || prefersReduced || !titleVisible || document.hidden) return;
+    lastTs = performance.now();
+    rafId = requestAnimationFrame(animate);
+  }
+  function stopMorph() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 
   if (!prefersReduced) {
-    rafId = requestAnimationFrame(animate);
+    new IntersectionObserver((entries) => {
+      titleVisible = entries[0].isIntersecting;
+      if (titleVisible) startMorph();
+      else stopMorph();
+    }).observe(wrap);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopMorph();
+      else startMorph();
+    });
+    startMorph();
   }
 
   window.addEventListener("pagehide", () => {
