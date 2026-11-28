@@ -969,13 +969,15 @@ section {
 .footer-block {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
   margin-top: clamp(76px, 10vw, 126px);
 }
 .footer-logo {
   color: #101010;
   /* signature script: a sign-off that contrasts with the condensed contact headline */
-  font-family: "Herr Von Muellerhoff", var(--script);
-  font-size: clamp(110px, 17vw, 240px);
+  font-family: "Pinyon Script", var(--script);
+  font-size: clamp(84px, 12vw, 176px);
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1;
@@ -990,7 +992,10 @@ section {
     0 32px 56px rgba(16, 16, 16, 0.12);
   position: relative;
   display: inline-grid;
+  align-self: flex-end;
   padding-top: 0.12em;
+  padding-right: 0.08em;
+  margin-bottom: 0.14em; /* room for the z descender above the footer bar */
   cursor: pointer;
   outline: none;
   /* clip the top so letters roll out of sight, leave room below for the shadow */
@@ -1007,6 +1012,7 @@ section {
 .footer-logo-cell {
   grid-area: 1 / 1;
   align-self: end;
+  justify-self: end;
   white-space: nowrap;
   text-shadow: var(--logo-shadow);
 }
