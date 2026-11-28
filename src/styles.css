@@ -168,7 +168,7 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.9) contrast(1.08) brightness(0.74);
+  filter: saturate(1.05) contrast(1.04) brightness(0.92);
   transform: translate3d(0, 0, 0) scale(1.045);
   will-change: transform, opacity;
   backface-visibility: hidden;
@@ -1422,7 +1422,7 @@ body.motion-ready .service-card:not(.revealed) {
     height: 100svh;
     margin-bottom: -100svh;
     z-index: 0;
-    background: #c9b6b4;
+    background: #c3cd47;
   }
   .hero-scroll.has-hero-frames .hero-content {
     padding-bottom: 26svh;
