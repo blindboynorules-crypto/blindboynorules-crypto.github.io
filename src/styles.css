@@ -1422,7 +1422,7 @@ body.motion-ready .service-card:not(.revealed) {
     height: 100svh;
     margin-bottom: -100svh;
     z-index: 0;
-    background: #c3cd47;
+    background: #a3a93f;
   }
   .hero-scroll.has-hero-frames .hero-content {
     padding-bottom: 26svh;
