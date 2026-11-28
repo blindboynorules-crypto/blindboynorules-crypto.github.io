@@ -974,8 +974,8 @@ section {
 .footer-logo {
   color: #101010;
   /* signature script: a sign-off that contrasts with the condensed contact headline */
-  font-family: var(--script);
-  font-size: clamp(96px, 15vw, 210px);
+  font-family: "Herr Von Muellerhoff", var(--script);
+  font-size: clamp(110px, 17vw, 240px);
   font-weight: 400;
   letter-spacing: 0;
   line-height: 1;
