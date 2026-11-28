@@ -643,3 +643,45 @@ setTimeout(() => {
 
   dottedObserver.observe(container);
 })();
+
+/* Footer wordmark: split into letters, flip on hover (mouse) or on its own when in view (touch). */
+(function () {
+  const logo = document.querySelector(".footer-logo-reveal");
+  if (!logo) return;
+  logo.querySelectorAll(".footer-logo-cell").forEach((cell) => {
+    const text = cell.textContent.trim();
+    cell.textContent = "";
+    [...text].forEach((c, i) => {
+      const ch = document.createElement("span");
+      ch.className = "ch";
+      ch.textContent = c;
+      ch.style.transitionDelay = `${i * 28}ms`;
+      cell.appendChild(ch);
+    });
+  });
+
+  const flip = (on) => logo.classList.toggle("is-flipped", on);
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+  if (finePointer.matches) {
+    logo.addEventListener("mouseenter", () => flip(true));
+    logo.addEventListener("mouseleave", () => flip(false));
+  }
+  logo.addEventListener("focus", () => flip(true));
+  logo.addEventListener("blur", () => flip(false));
+
+  if (!finePointer.matches && !prefersReduced) {
+    // touch: alternate every few seconds while the logo is on screen
+    let timer = null;
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !timer) {
+        timer = window.setInterval(() => flip(!logo.classList.contains("is-flipped")), 2800);
+      } else if (!entry.isIntersecting && timer) {
+        window.clearInterval(timer);
+        timer = null;
+        flip(false);
+      }
+    }, { threshold: 0.6 }).observe(logo);
+    logo.addEventListener("click", () => flip(!logo.classList.contains("is-flipped")));
+  }
+})();

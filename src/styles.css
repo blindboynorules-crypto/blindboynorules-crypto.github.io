@@ -972,21 +972,29 @@ section {
   margin-top: clamp(76px, 10vw, 126px);
 }
 .footer-logo {
-  color: #fff;
+  color: #101010;
   font-family: var(--display);
   font-size: clamp(68px, 13vw, 176px);
   font-weight: 900;
   letter-spacing: -0.075em;
-  line-height: 0.72;
+  line-height: 0.82;
   text-transform: uppercase;
 }
+/* Wordmark that rolls letter by letter into LET'S COLLAB. Soft layered drop shadow
+   so the ink letters sit on the paper background like a printed, raised mark. */
 .footer-logo-reveal {
+  --logo-shadow:
+    0 1px 1px rgba(16, 16, 16, 0.08),
+    0 4px 8px rgba(16, 16, 16, 0.08),
+    0 14px 24px rgba(16, 16, 16, 0.1),
+    0 32px 56px rgba(16, 16, 16, 0.12);
   position: relative;
-  display: inline-block;
-  overflow: hidden;
-  height: clamp(50px, 9.4vw, 127px);
-  cursor: default;
+  display: inline-grid;
+  padding-top: 0.06em;
+  cursor: pointer;
   outline: none;
+  /* clip the top so letters roll out of sight, leave room below for the shadow */
+  clip-path: inset(0 -0.4em -0.9em -0.4em);
 }
 .footer-logo-reveal:focus-visible {
   outline: 2px solid var(--orange);
@@ -994,56 +1002,52 @@ section {
   border-radius: 4px;
 }
 .footer-logo-stack {
-  display: block;
-  transition: transform 300ms var(--ease-in-out);
-  will-change: transform;
+  display: grid;
 }
 .footer-logo-cell {
-  display: flex;
-  align-items: center;
-  height: clamp(50px, 9.4vw, 127px);
+  grid-area: 1 / 1;
+  align-self: end;
   white-space: nowrap;
-  line-height: 1;
-  text-shadow:
-    0 1px 2px rgba(16, 16, 16, 0.08),
-    0 10px 22px rgba(16, 16, 16, 0.12);
-  transition: text-shadow 220ms var(--ease-out);
+  text-shadow: var(--logo-shadow);
 }
 .footer-logo-cell--alt {
-  font-size: clamp(28px, 5.4vw, 64px);
-  letter-spacing: -0.025em;
+  font-size: 0.62em;
+  letter-spacing: -0.045em;
   color: var(--orange);
   text-shadow:
-    0 1px 2px rgba(16, 16, 16, 0.1),
-    0 9px 20px rgba(249, 115, 22, 0.14);
+    0 1px 1px rgba(16, 16, 16, 0.08),
+    0 4px 8px rgba(249, 115, 22, 0.12),
+    0 14px 24px rgba(249, 115, 22, 0.14),
+    0 28px 48px rgba(16, 16, 16, 0.1);
 }
-.footer-logo-reveal:focus-visible .footer-logo-stack {
-  transform: translateY(-50%);
+.footer-logo-cell .ch {
+  display: inline-block;
+  white-space: pre;
+  transition:
+    transform 560ms var(--ease-out),
+    opacity 420ms var(--ease-out),
+    filter 420ms var(--ease-out);
 }
-.footer-logo-reveal:focus-visible .footer-logo-cell {
-  text-shadow:
-    0 1px 2px rgba(16, 16, 16, 0.06),
-    0 7px 16px rgba(16, 16, 16, 0.1);
+.footer-logo-cell--alt .ch {
+  opacity: 0;
+  transform: translateY(70%);
+  filter: blur(6px);
 }
-.footer-logo-reveal:focus-visible .footer-logo-cell--alt {
-  text-shadow:
-    0 1px 2px rgba(16, 16, 16, 0.08),
-    0 8px 18px rgba(249, 115, 22, 0.16);
+.footer-logo-reveal.is-flipped .footer-logo-cell--default .ch {
+  opacity: 0;
+  transform: translateY(-105%);
+  filter: blur(6px);
 }
-/* hover flip only on real pointers; on touch a tap would leave it stuck */
-@media (hover: hover) and (pointer: fine) {
-  .footer-logo-reveal:hover .footer-logo-stack {
-    transform: translateY(-50%);
-  }
-  .footer-logo-reveal:hover .footer-logo-cell {
-    text-shadow:
-      0 1px 2px rgba(16, 16, 16, 0.06),
-      0 7px 16px rgba(16, 16, 16, 0.1);
-  }
-  .footer-logo-reveal:hover .footer-logo-cell--alt {
-    text-shadow:
-      0 1px 2px rgba(16, 16, 16, 0.08),
-      0 8px 18px rgba(249, 115, 22, 0.16);
+.footer-logo-reveal.is-flipped .footer-logo-cell--alt .ch {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-logo-cell .ch {
+    transform: none !important;
+    filter: none !important;
+    transition: opacity 200ms ease;
   }
 }
 .footer-bar {
