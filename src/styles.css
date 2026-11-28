@@ -1459,3 +1459,31 @@ body.motion-ready .service-card:not(.revealed) {
     background-repeat: no-repeat;
   }
 }
+
+/* Headline word reveal: each word rises out of its own mask, then accent words ink to orange */
+.split-title .word {
+  display: inline-block;
+  /* clip only below the line so tall caps are never cut at the top */
+  clip-path: inset(-0.4em -0.2em 0.02em -0.2em);
+  vertical-align: top;
+}
+.split-title .word-in {
+  display: inline-block;
+  transform-origin: 0% 100%;
+  transition:
+    transform 1100ms var(--ease-out),
+    color 500ms ease;
+}
+body.motion-ready .split-title:not(.revealed) {
+  opacity: 1;
+  transform: none;
+}
+body.motion-ready .split-title:not(.revealed) .word-in {
+  transform: translateY(105%) rotate(6deg);
+}
+body.motion-ready .split-title:not(.revealed) em .word-in {
+  color: var(--ink);
+}
+body.motion-ready .contact-title.split-title:not(.revealed) em .word-in {
+  color: #101010;
+}

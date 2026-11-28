@@ -14,6 +14,47 @@ const videoSources = video ? [...video.querySelectorAll("source")] : [];
 const cues = [...document.querySelectorAll(".cue")];
 const progressCard = document.getElementById("progressCard");
 const progressLabel = document.getElementById("progressLabel");
+/* Split big headlines into words so they can rise out of a mask one by one. */
+function splitHeadline(title) {
+  let i = 0;
+  const wrapWords = (text, parent) => {
+    text.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        parent.appendChild(document.createTextNode(" "));
+        return;
+      }
+      const outer = document.createElement("span");
+      outer.className = "word";
+      const inner = document.createElement("span");
+      inner.className = "word-in";
+      inner.textContent = part;
+      inner.style.transitionDelay = `${i * 90}ms, ${i * 90 + 320}ms`;
+      i++;
+      outer.appendChild(inner);
+      parent.appendChild(outer);
+    });
+  };
+  [...title.childNodes].forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const frag = document.createDocumentFragment();
+      wrapWords(node.textContent.trim() ? node.textContent : "", frag);
+      title.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const text = node.textContent;
+      node.textContent = "";
+      wrapWords(text, node);
+    }
+  });
+  title.classList.add("split-title");
+}
+
+if (!prefersReduced) {
+  document
+    .querySelectorAll(".section-title:not(.reel-title-editorial), .contact-title")
+    .forEach(splitHeadline);
+}
+
 const revealItems = [...document.querySelectorAll(".reveal, .service-card")];
 const shouldScrubHeroVideo =
   Boolean(video) && !mobileHeroQuery.matches && !prefersReduced;
